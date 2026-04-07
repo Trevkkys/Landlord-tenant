@@ -1,0 +1,391 @@
+/* GENERAL */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  scroll-behavior: smooth;
+}
+
+/*NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: lightblue;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Logo */
+.logo {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+/* Links and buttons container */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Text links */
+.nav-links span {
+  cursor: pointer;
+  color: #555;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.nav-links span:hover {
+  color: black;
+}
+
+/* Boxed buttons container */
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: 20px;
+}
+
+/* Buttons styling */
+.nav-buttons button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.login-btn {
+  background: white;
+  border: 2px solid #555;
+  color: #555;
+}
+
+.login-btn:hover {
+  background: #f0f0f0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.register-btn {
+  background: black;
+  color: white;
+}
+
+.register-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* HERO  */
+.hero {
+  text-align: center;
+  padding: 50px 20px;
+  background: #ddd;
+}
+
+.hero p {
+  margin-top: 10px;
+  margin-bottom: 40px;
+  font-size: 18px;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* SEARCH SECTION */
+.search {
+  text-align: center;
+  padding: 40px 20px;
+  background: lightblue;
+}
+
+.search h2 {
+  margin-bottom: 20px;
+}
+
+.search p {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #555;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-box input {
+  padding: 10px;
+  width: 250px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.search-box button {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  background: black;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-box button:hover {
+  opacity: 0.9;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/*PROPERTIES */
+.properties {
+  background: linear-gradient(lightblue 40%, #ddd 50%);
+  padding: 30px;
+}
+
+.property-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  background: #ddd;
+  padding: 15px;
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: 0.2s;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* HOW IT WORKS (BOTTOM) */
+.how {
+  padding: 40px 30px;
+  background: #ddd;
+  text-align: center;
+}
+
+.roles {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.role-card {
+  background: lightcyan;
+  padding: 20px;
+  border-radius: 10px;
+  width: 220px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: 0.2s;
+}
+
+.role-card:hover {
+  transform: translateY(-5px);
+}
+
+/*  LOGIN & REGISTER PAGES  */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 0;
+}
+
+.login-box {
+  background: white;
+  padding: 30px;
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.register-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.role-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.role-buttons button {
+  border: 1px solid #555;
+  background: white;
+  color: #555;
+  transition: 0.2s;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+.role-buttons button.primary {
+  background: black;
+  color: white;
+  border: none;
+}
+
+.role-buttons button:hover {
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+.primary {
+  background: black;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.link {
+  color: blue;
+  cursor: pointer;
+}
+
+/* LOCATIONS */
+.locations {
+  padding: 40px 20px;
+  text-align: center;
+  background: #ddd;
+}
+
+.location-grid {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.location-card {
+  background: lightcyan;
+  padding: 10px 14px;
+  width: auto;
+  max-width: 200px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: 0.2s;
+  text-align: center;
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+/* WHY SECTION */
+.why {
+  padding: 40px 20px;
+  text-align: center;
+  background: lightblue;
+}
+
+.why-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+/* LANDLORD CTA SECTION */
+.landlord-cta {
+  padding: 40px 20px;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+}
+
+.cta-content {
+  width: 80%;
+  max-width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Left text */
+.cta-content h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Right box */
+.cta-box {
+  background: lightblue;
+  padding: 12px 18px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.cta-box:hover {
+  background: black;
+  color: white;
+}
+
+/* Arrow */
+.arrow {
+  font-size: 18px;
+}
+
+/* CTA */
+.cta {
+  padding: 40px 20px;
+  text-align: center;
+  background: lightblue;
+}
+
+/* FOOTER */
+.footer {
+  padding: 20px;
+  text-align: center;
+  background: black;
+  color: white;
+}
