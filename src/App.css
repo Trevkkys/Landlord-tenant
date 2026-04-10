@@ -6,53 +6,63 @@ body {
   scroll-behavior: smooth;
 }
 
-/*NAVBAR */
+/* CONTAINER */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* NAVBAR */
 .navbar {
+  width: 100%;
+  background: #069494;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-inner {
+  width: 100%;
+  padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  background: lightblue;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  position: relative;
+  box-sizing: border-box;
 }
 
-/* Logo */
+/* LOGO */
 .logo {
-  cursor: pointer;
+  color: white;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 40px;
 }
 
-/* Links and buttons container */
-.nav-links {
+/* CENTER LINKS */
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
-/* Text links */
-.nav-links span {
+.nav-center span {
   cursor: pointer;
-  color: #555;
-  transition: 0.2s;
+  color: white;
   font-weight: 500;
+  transition: 0.2s;
 }
 
-.nav-links span:hover {
+.nav-center span:hover {
   color: black;
 }
 
-/* Boxed buttons container */
-.nav-buttons {
+/* RIGHT BUTTONS */
+.nav-right {
   display: flex;
   gap: 10px;
-  margin-left: 20px;
 }
 
-/* Buttons styling */
 .nav-buttons button {
   padding: 8px 16px;
   border-radius: 6px;
@@ -83,24 +93,53 @@ body {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* HERO  */
+/* HERO */
 .hero {
-  text-align: center;
   padding: 50px 20px;
   background: #ddd;
+  min-height: 400px;
 }
 
-.hero p {
-  margin-top: 10px;
-  margin-bottom: 40px;
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+/* LEFT IMAGE */
+.hero-image {
+  flex: 0 0 auto;
+  max-height: 250px;
+  /* shorter, adjust as needed */
+  overflow: hidden;
+}
+
+.hero-image img {
+  height: 100%;
+  /* limit height */
+  width: auto;
+  /* preserve aspect ratio */
+  object-fit: cover;
+  /* prevents stretching */
+  border-radius: 10px;
+}
+
+/* RIGHT TEXT */
+.hero-text {
+  flex: 1;
+}
+
+.hero-text h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.hero-text p {
   font-size: 18px;
   color: #333;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 400;
-  line-height: 1.6;
 }
 
-/* SEARCH SECTION */
+/* SEARCH */
 .search {
   text-align: center;
   padding: 40px 20px;
@@ -151,9 +190,40 @@ body {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
-/*PROPERTIES */
+/* CATEGORIES (inside search) */
+.search .category-grid {
+  margin-top: 25px;
+}
+
+.category-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.category-card {
+  padding: 15px 20px;
+  border-radius: 10px;
+  min-width: 120px;
+  cursor: pointer;
+  transition: 0.2s;
+  background: #eee;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+}
+
+.category-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* PROPERTIES */
 .properties {
-  background: linear-gradient(lightblue 40%, #ddd 50%);
+  background: linear-gradient(#069494 40%, lightblue 50%);
   padding: 30px;
 }
 
@@ -183,7 +253,47 @@ body {
   transform: translateY(-5px);
 }
 
-/* HOW IT WORKS (BOTTOM) */
+.price {
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.location {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.details {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.agent {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.view-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: black;
+  color: white;
+  transition: 0.2s;
+}
+
+.view-btn:hover {
+  opacity: 0.9;
+}
+
+/* HOW IT WORKS */
 .how {
   padding: 40px 30px;
   background: #ddd;
@@ -199,7 +309,8 @@ body {
 }
 
 .role-card {
-  background: lightcyan;
+  background: #4f7682;
+  color: white;
   padding: 20px;
   border-radius: 10px;
   width: 220px;
@@ -211,7 +322,7 @@ body {
   transform: translateY(-5px);
 }
 
-/*  LOGIN & REGISTER PAGES  */
+/* LOGIN & REGISTER */
 .login-container {
   display: flex;
   justify-content: center;
@@ -299,9 +410,9 @@ body {
 }
 
 .location-card {
-  background: lightcyan;
+  background: #4f7682;
+  color: white;
   padding: 10px 14px;
-  width: auto;
   max-width: 200px;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -314,7 +425,7 @@ body {
   cursor: pointer;
 }
 
-/* WHY SECTION */
+/* WHY */
 .why {
   padding: 40px 20px;
   text-align: center;
@@ -329,7 +440,7 @@ body {
   margin-top: 20px;
 }
 
-/* LANDLORD CTA SECTION */
+/* LANDLORD CTA */
 .landlord-cta {
   padding: 40px 20px;
   background: #f5f5f5;
@@ -346,15 +457,14 @@ body {
   flex-wrap: wrap;
 }
 
-/* Left text */
 .cta-content h2 {
   font-size: 24px;
   margin: 0;
 }
 
-/* Right box */
 .cta-box {
-  background: lightblue;
+  background: #069494;
+  color: white;
   padding: 12px 18px;
   border-radius: 8px;
   display: flex;
@@ -367,10 +477,8 @@ body {
 
 .cta-box:hover {
   background: black;
-  color: white;
 }
 
-/* Arrow */
 .arrow {
   font-size: 18px;
 }
