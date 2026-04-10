@@ -81,7 +81,7 @@ function Home() {
 
       {/* SEARCH */}
       < section id="search" className="search" >
-        <h2>Find Properties by Location</h2>
+        <h2>Discover Properties by Location</h2>
         <p>Search for Properties and Rent/Buy directly from Landlords</p>
 
         <div className="search-box">
