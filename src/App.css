@@ -22,7 +22,7 @@ body {
 
 .navbar-inner {
   width: 100%;
-  padding: 10px 30px;
+  padding: 6px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -34,7 +34,7 @@ body {
 .logo {
   color: white;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 22px;
 }
 
 /* CENTER LINKS */
@@ -43,7 +43,19 @@ body {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 20px;
+  gap: 14px;
+}
+
+.nav-center a {
+  text-decoration: none;
+  color: white;
+  /* or whatever your nav color is */
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav-center a:hover {
+  color: black;
 }
 
 .nav-center span {
@@ -310,6 +322,12 @@ body {
   text-align: center;
 }
 
+.how h2 {
+  color: black;
+  margin-bottom: 20px;
+  font-weight: bolder;
+}
+
 .roles {
   display: flex;
   justify-content: center;
@@ -513,4 +531,317 @@ body {
   text-align: center;
   background: black;
   color: white;
+}
+
+.login-subtext {
+  font-size: 14px;
+  color: #069494;
+  margin-bottom: 10px;
+}
+
+.role-title {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #069494;
+}
+
+.login-btn-full {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.register-box h2 {
+  color: black;
+}
+
+/* =========================
+   GLOBAL DASHBOARD SYSTEM
+   ========================= */
+
+.dashboard-layout {
+  padding: 20px;
+  background: #f7f9fb;
+  min-height: 100vh;
+
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* wrapper for internal spacing */
+.dashboard-content {
+  width: 100%;
+  padding: 0 15px;
+}
+
+/* =========================
+   TOP NAV (ALL DASHBOARDS)
+   ========================= */
+
+.dashboard-nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 15px 25px;
+  background: #069494;
+  color: white;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  border-radius: 12px;
+}
+
+.dashboard-nav h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.dashboard-nav-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dashboard-nav-links span {
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.dashboard-nav-links span:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   HEADER (GREETING)
+   ========================= */
+
+.dashboard-header {
+  width: 100%;
+  margin: 25px 0;
+  text-align: center;
+}
+
+.dashboard-header h2 {
+  color: #069494;
+  font-size: 26px;
+  margin-bottom: 5px;
+}
+
+.dashboard-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* =========================
+   STATS GRID (ALL DASHBOARDS)
+   ========================= */
+
+.stats-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.stat-box {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: 0.2s;
+}
+
+.stat-box:hover {
+  transform: translateY(-3px);
+}
+
+.stat-box h3 {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.stat-box p {
+  font-size: 20px;
+  font-weight: bold;
+  color: #069494;
+}
+
+/* =========================
+   SECTION WRAPPER
+   ========================= */
+
+.dashboard-section {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.dashboard-section h3 {
+  margin-bottom: 12px;
+  color: #222;
+  text-align: center;
+}
+
+/* =========================
+   REQUEST SLIDER
+   ========================= */
+
+.request-slider {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.request-card {
+  min-width: 220px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: 0.2s;
+}
+
+.request-card:hover {
+  transform: translateY(-3px);
+}
+
+.request-card p {
+  margin: 5px 0;
+}
+
+/* request buttons */
+.request-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.request-actions button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.request-actions .approve {
+  background: #069494;
+  color: white;
+}
+
+.request-actions .approve:hover {
+  background: #047a7a;
+}
+
+.request-actions .decline {
+  background: #222;
+  color: white;
+}
+
+.request-actions .decline:hover {
+  opacity: 0.8;
+}
+
+/* =========================
+   LISTINGS GRID
+   ========================= */
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  width: 100%;
+}
+
+.listing-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: 0.2s;
+}
+
+.listing-card:hover {
+  transform: translateY(-3px);
+}
+
+.listing-card h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.status {
+  color: #069494;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+/* =========================
+   PROFILE MODAL (KEEP FOR NOW)
+   ========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.profile-modal {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  width: 400px;
+  max-width: 90%;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.primary {
+  background: #069494;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary:hover {
+  background: #047a7a;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   SEARCH INPUT
+   ========================= */
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.search-input:focus {
+  border-color: #069494;
 }
