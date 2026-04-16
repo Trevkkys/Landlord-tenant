@@ -2,51 +2,112 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-    const [role, setRole] = useState("");
+
     const navigate = useNavigate();
 
-    const handleRegister = () => {
-        if (!role) return alert("Please select a role");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("");
 
-        // for now just redirect like login (no backend yet)
-        if (role === "Tenant") navigate("/tenant");
+    const handleRegister = () => {
+
+        if (!name || !email || !password || !role) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const user = {
+            name,
+            email,
+            role: role.toLowerCase()
+        };
+
+        // save user (simulate signup)
+        localStorage.setItem("vitRentUser", JSON.stringify(user));
+
+        // redirect
         if (role === "Landlord") navigate("/landlord");
+        if (role === "Tenant") navigate("/tenant");
         if (role === "Agent") navigate("/agent");
     };
 
     return (
-        <div className="login-container">
-            <div className="login-box register-box">
+        <div className="auth-page">
 
-                <h2>Create Account</h2>
-                <p className="login-subtext">Join VitRent today</p>
+            {/* LEFT SIDE */}
+            <div className="auth-left">
 
-                <input type="text" placeholder="Full Name" />
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
+                <h1>Join VitRent</h1>
+                <p>
+                    Create your account and start managing properties or finding homes easily.
+                </p>
 
-                <p className="role-title">Select Account Type</p>
-
-                <div className="role-buttons">
-                    {["Tenant", "Landlord", "Agent"].map((r) => (
-                        <button
-                            key={r}
-                            onClick={() => setRole(r)}
-                            className={role === r ? "primary" : ""}
-                        >
-                            {r}
-                        </button>
-                    ))}
+                <div className="auth-features">
+                    <p>✔ Smart property listings</p>
+                    <p>✔ Trusted landlord–agent system</p>
+                    <p>✔ Fast and secure rental process</p>
                 </div>
 
-                <button
-                    className="primary login-btn-full"
-                    onClick={handleRegister}
-                >
-                    Create Account
-                </button>
+            </div>
+
+            {/* RIGHT SIDE */}
+            <div className="auth-right">
+
+                <div className="auth-card">
+
+                    <h2>Create Account 🚀</h2>
+                    <p>Sign up to get started</p>
+
+                    <input
+                        placeholder="Full Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+
+                    <input
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    {/* ROLE */}
+                    <p className="role-title">Select your role</p>
+
+                    <div className="role-buttons">
+                        {["Tenant", "Landlord", "Agent"].map((r) => (
+                            <button
+                                key={r}
+                                onClick={() => setRole(r)}
+                                className={role === r ? "role-active" : ""}
+                            >
+                                {r}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button className="primary login-btn" onClick={handleRegister}>
+                        Create Account
+                    </button>
+
+                    <p className="signup-text">
+                        Already have an account?{" "}
+                        <span onClick={() => navigate("/login")}>
+                            Login here
+                        </span>
+                    </p>
+
+                </div>
 
             </div>
+
         </div>
     );
 }

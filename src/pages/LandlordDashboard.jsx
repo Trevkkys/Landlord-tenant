@@ -1,152 +1,149 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function LandlordDashboard() {
-    const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState("dashboard");
+    const user = JSON.parse(localStorage.getItem("vitUser"));
 
     const [requests, setRequests] = useState([
-        { id: 1, agent: "Agent John", property: "Lekki 2 Bedroom" },
-        { id: 2, agent: "Agent Sarah", property: "Ikoyi Duplex" },
+        { id: 1, agent: "Agent John", property: "Lekki 2 Bedroom", date: "2h ago" },
+        { id: 2, agent: "Agent Sarah", property: "Ikoyi Duplex", date: "5h ago" },
     ]);
 
     const listings = [
-        { id: 1, title: "3 Bedroom Flat", status: "Active" },
-        { id: 2, title: "2 Bedroom Apartment", status: "Active" },
-        { id: 3, title: "Mini Flat", status: "Pending" },
+        { id: 1, title: "3 Bedroom Flat", status: "Active", price: "₦1.2M" },
+        { id: 2, title: "2 Bedroom Apartment", status: "Rented", price: "₦800K" },
     ];
 
-    const approve = (id) => setRequests(requests.filter(r => r.id !== id));
-    const decline = (id) => setRequests(requests.filter(r => r.id !== id));
+    const handleAction = (id) => {
+        setRequests(prev => prev.filter(r => r.id !== id));
+    };
 
     return (
         <div className="dashboard-layout">
 
-            {/* TOP NAV */}
-            <div className="dashboard-nav">
-                <h3>VitRent</h3>
+            <Navbar />
 
-                <div className="dashboard-nav-links">
-                    <span onClick={() => setActiveTab("dashboard")}>Dashboard</span>
-                    <span onClick={() => setActiveTab("listings")}>Listings</span>
-                    <span onClick={() => setActiveTab("requests")}>Requests</span>
-                    <span onClick={() => setActiveTab("earnings")}>Earnings</span>
-                    <span onClick={() => navigate("/profile")}>Profile</span>
-                </div>
-            </div>
+            <div className="dashboard-content">
 
-            {/* HEADER */}
-            <div className="dashboard-header">
-                <h2>Good morning, James 👋</h2>
-                <p>Here’s your property performance overview</p>
-            </div>
-
-            {/* STATS */}
-            <div className="stats-grid">
-                <div className="stat-box">
-                    <h3>Active Listings</h3>
-                    <p>{listings.length}</p>
+                {/* HEADER */}
+                <div className="dashboard-header">
+                    <h2>Good morning, {user?.name || "User"} 👋</h2>
+                    <p>Here’s a quick overview of your properties</p>
                 </div>
 
-                <div className="stat-box">
-                    <h3>Pending Requests</h3>
-                    <p>{requests.length}</p>
+                {/* STATS */}
+                <div className="stats-grid">
+
+                    <div className="stat-box">
+                        <h3>Active Listings</h3>
+                        <p>{listings.length}</p>
+                    </div>
+
+                    <div className="stat-box">
+                        <h3>Total Earnings</h3>
+                        <p>₦2,400,000</p>
+                    </div>
+
+                    <div className="stat-box">
+                        <h3>Pending Requests</h3>
+                        <p>{requests.length}</p>
+                    </div>
+
                 </div>
 
-                <div className="stat-box">
-                    <h3>Monthly Earnings</h3>
-                    <p>₦2,000,000</p>
-                </div>
-            </div>
+                {/* MAIN GRID */}
+                <div className="dashboard-main">
 
-            {/* DASHBOARD TAB */}
-            {activeTab === "dashboard" && (
-                <>
-                    <div className="dashboard-section">
-                        <h3>Quick Requests Preview</h3>
+                    {/* REQUESTS */}
+                    <div className="dashboard-card large">
 
-                        <div className="request-slider">
-                            {requests.map(r => (
-                                <div className="request-card" key={r.id}>
-                                    <p><b>{r.agent}</b></p>
-                                    <p>{r.property}</p>
-                                </div>
-                            ))}
+                        <div className="card-header">
+                            <h3>Recent Requests</h3>
+                            <span className="view-all">View all</span>
                         </div>
+
+                        {requests.length === 0 ? (
+                            <p style={{ textAlign: "center", color: "#999" }}>
+                                No requests yet
+                            </p>
+                        ) : (
+                            requests.map((r) => (
+                                <div className="request-row" key={r.id}>
+
+                                    <div>
+                                        <strong>{r.agent}</strong>
+                                        <p>{r.property}</p>
+                                        <small>{r.date}</small>
+                                    </div>
+
+                                    <div className="request-actions">
+                                        <button
+                                            className="approve"
+                                            onClick={() => handleAction(r.id)}
+                                        >
+                                            Approve
+                                        </button>
+
+                                        <button
+                                            className="decline"
+                                            onClick={() => handleAction(r.id)}
+                                        >
+                                            Decline
+                                        </button>
+                                    </div>
+
+                                </div>
+                            ))
+                        )}
+
                     </div>
 
-                    <div className="dashboard-section">
-                        <h3>Active Listings Preview</h3>
+                    {/* QUICK SUMMARY */}
+                    <div className="dashboard-card">
 
-                        <div className="listing-grid">
-                            {listings.slice(0, 3).map(l => (
-                                <div className="listing-card" key={l.id}>
-                                    <h4>{l.title}</h4>
-                                    <p className="status">{l.status}</p>
-                                </div>
-                            ))}
+                        <h3>Quick Summary</h3>
+
+                        <div className="summary-item">
+                            <span>Occupied Units</span>
+                            <strong>8 / 10</strong>
                         </div>
+
+                        <div className="summary-item">
+                            <span>Monthly Income</span>
+                            <strong>₦2M</strong>
+                        </div>
+
+                        <div className="summary-item">
+                            <span>Vacant Units</span>
+                            <strong>2</strong>
+                        </div>
+
                     </div>
-                </>
-            )}
 
-            {/* REQUEST TAB */}
-            {activeTab === "requests" && (
-                <div className="dashboard-section">
-                    <h3>All Pending Requests</h3>
-
-                    <div className="request-slider">
-                        {requests.map(r => (
-                            <div className="request-card" key={r.id}>
-                                <p><b>{r.agent}</b></p>
-                                <p>{r.property}</p>
-
-                                <div className="request-actions">
-                                    <button className="approve" onClick={() => approve(r.id)}>Approve</button>
-                                    <button className="decline" onClick={() => decline(r.id)}>Decline</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
                 </div>
-            )}
 
-            {/* LISTINGS TAB */}
-            {activeTab === "listings" && (
+                {/* LISTINGS */}
                 <div className="dashboard-section">
-                    <h3>All Listings</h3>
+
+                    <div className="card-header">
+                        <h3>Your Listings</h3>
+                        <span className="view-all">Manage</span>
+                    </div>
 
                     <div className="listing-grid">
                         {listings.map(l => (
                             <div className="listing-card" key={l.id}>
                                 <h4>{l.title}</h4>
                                 <p className="status">{l.status}</p>
+                                <p className="price">{l.price}</p>
                             </div>
                         ))}
                     </div>
+
                 </div>
-            )}
 
-            {/* EARNINGS TAB */}
-            {activeTab === "earnings" && (
-                <div className="dashboard-section">
-                    <h3>Earnings Overview</h3>
-
-                    <div className="stats-grid">
-                        <div className="stat-box">
-                            <h3>This Month</h3>
-                            <p>₦2,000,000</p>
-                        </div>
-
-                        <div className="stat-box">
-                            <h3>Total Income</h3>
-                            <p>₦10,500,000</p>
-                        </div>
-                    </div>
-                </div>
-            )}
-
+            </div>
         </div>
     );
 }

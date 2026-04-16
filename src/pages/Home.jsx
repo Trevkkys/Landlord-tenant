@@ -35,16 +35,24 @@ export default function Home() {
 
                     <div className="nav-right">
                         <Link to="/login">
-                            <button className="login-btn">Login</button>
+                            <button className="nav-login-btn">Login</button>
                         </Link>
 
                         <Link to="/register">
-                            <button className="register-btn">Register</button>
+                            <button className="nav-register-btn">Register</button>
                         </Link>
                     </div>
 
                 </div>
             </nav >
+
+            {/* QUICK ACTIONS */}
+            <div className="quick-actions">
+                <div className="action-card">🏠 Find Home</div>
+                <div className="action-card">🏢 List Property</div>
+                <div className="action-card">🤝 Become Agent</div>
+                <div className="action-card">📍 Browse Locations</div>
+            </div>
 
             {/* HERO */}
             < section id="hero" className="hero" >
@@ -57,6 +65,13 @@ export default function Home() {
                     <div className="hero-text">
                         <h2>Find Your Perfect Home</h2>
                         <p>Connect with landlords, agents, and secure payments</p>
+
+                        {/* TRUST STRIP (NEW) */}
+                        <div className="hero-trust">
+                            <span>✔ Verified Listings</span>
+                            <span>✔ Trusted Agents</span>
+                            <span>✔ Secure Payments</span>
+                        </div>
                     </div>
 
                 </div>
@@ -89,7 +104,7 @@ export default function Home() {
                         "Asaba"].map((place) => (
                             <div className="location-card" key={place}>
                                 <h3>{place}</h3>
-                                <p>View available homes</p>
+                                <p>Explore listings in {place}</p>
                             </div>
                         ))}
                     </div>
@@ -160,10 +175,14 @@ export default function Home() {
             </section >
 
             {/* CTA */}
-            < section className="cta" >
+            <section className="cta">
                 <h2>Ready to Find Your Home?</h2>
+                <p>Join thousands already using VitRent</p>
+
                 <button className="primary">Get Started</button>
-            </section > {/* FOOTER */} < footer className="footer" >
+            </section>
+
+            {/* FOOTER */} < footer className="footer" >
                 <p>© 2026 VitRent</p>
                 <p>Contact | Privacy | Terms</p>
             </footer >

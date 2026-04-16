@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import TenantDashboard from "./pages/TenantDashboard";
 import LandlordDashboard from "./pages/LandlordDashboard";
 import AgentDashboard from "./pages/AgentDashboard";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/tenant" element={<TenantDashboard />} />
       <Route path="/landlord" element={<LandlordDashboard />} />
       <Route path="/agent" element={<AgentDashboard />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }
