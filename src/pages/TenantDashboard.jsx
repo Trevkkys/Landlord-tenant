@@ -5,6 +5,45 @@ export default function TenantDashboard() {
 
     const [search, setSearch] = useState("");
 
+    const [showNotif, setShowNotif] = useState(false);
+
+    const notifications = [
+        { id: 1, text: "New property added near Lekki" },
+        { id: 2, text: "Your application was viewed" },
+        { id: 3, text: "Agent replied to your request" },
+    ];
+
+    const tenantImages = [
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
+        "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c",
+    ];
+
+    const recentProperties = [
+        {
+            id: 1,
+            title: "Luxury Studio Apartment",
+            location: "Victoria Island",
+            price: "₦900K",
+            img: "https://images.unsplash.com/photo-1600607687644-c7171b42498f"
+        },
+        {
+            id: 2,
+            title: "Modern 2 Bedroom Flat",
+            location: "Ikoyi",
+            price: "₦1.4M",
+            img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d"
+        },
+        {
+            id: 3,
+            title: "Cozy Self Contain",
+            location: "Yaba",
+            price: "₦500K",
+            img: "https://images.unsplash.com/photo-1600566752355-35792bedcfea"
+        }
+    ];
+
     const properties = [
         { id: 1, title: "2 Bedroom Apartment", location: "Lekki", price: "₦800K" },
         { id: 2, title: "Self Contain", location: "Yaba", price: "₦400K" },
@@ -21,6 +60,66 @@ export default function TenantDashboard() {
                 <div className="dashboard-header">
                     <h2>Find Your Next Home 🏡</h2>
                     <p>Search, filter and apply for properties easily</p>
+                </div>
+
+                <div className="notif-wrapper">
+
+                    <div className="bell-icon" onClick={() => setShowNotif(!showNotif)}>
+                        🔔
+
+                        <span className="notif-badge">
+                            {notifications.length}
+                        </span>
+                    </div>
+
+                    {showNotif && (
+                        <div className="notif-dropdown">
+
+                            <h4>Notifications</h4>
+
+                            {notifications.map(n => (
+                                <div key={n.id} className="notif-item">
+                                    {n.text}
+                                </div>
+                            ))}
+
+                        </div>
+                    )}
+
+                </div>
+
+                {/* AFFORDABILITY CALCULATOR */}
+                <div className="dashboard-calc">
+
+                    <h3>💰 Rent Affordability Calculator</h3>
+                    <p>Estimate how much rent you can comfortably afford</p>
+
+                    <input
+                        type="number"
+                        placeholder="Enter your monthly income (₦)"
+                        id="incomeInput"
+                        className="calc-input"
+                    />
+
+                    <button
+                        className="primary"
+                        onClick={() => {
+                            const income = document.getElementById("incomeInput").value;
+
+                            if (!income) return alert("Please enter your income");
+
+                            const rent = Math.round((income * 0.3));
+
+                            alert(`You can afford approx ₦${rent.toLocaleString()} monthly rent`);
+                        }}
+                    >
+                        Calculate
+                    </button>
+
+                    <div className="calc-note">
+                        💡 Recommended: Spend 25%–30% of your monthly income on rent
+                    </div>
+
                 </div>
 
                 {/* SEARCH */}
@@ -72,6 +171,11 @@ export default function TenantDashboard() {
                         {properties.map(p => (
                             <div className="listing-card" key={p.id}>
 
+                                <img
+                                    src={tenantImages[p.id % tenantImages.length]}
+                                    alt={p.title}
+                                />
+
                                 <h4>{p.title}</h4>
                                 <p className="location">{p.location}</p>
                                 <p className="price">{p.price}</p>
@@ -95,13 +199,21 @@ export default function TenantDashboard() {
                     </div>
 
                     <div className="request-slider">
-                        {properties.map(p => (
+
+                        {recentProperties.map(p => (
                             <div className="request-card" key={p.id}>
-                                <p><b>{p.title}</b></p>
-                                <p>{p.location}</p>
-                                <p className="price">{p.price}</p>
+
+                                <img className="recent-img" src={p.img} alt={p.title} />
+
+                                <div>
+                                    <p><b>{p.title}</b></p>
+                                    <p>{p.location}</p>
+                                    <p className="price">{p.price}</p>
+                                </div>
+
                             </div>
                         ))}
+
                     </div>
 
                 </div>

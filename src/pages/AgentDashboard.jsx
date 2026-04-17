@@ -8,6 +8,20 @@ export default function AgentDashboard() {
         { id: 2, name: "Sarah", interest: "Self Contain Yaba", date: "3h ago" },
     ]);
 
+    const [showNotif, setShowNotif] = useState(false);
+
+    const notifications = [
+        { id: 1, text: "New client interested in Ikoyi property" },
+        { id: 2, text: "Landlord approved your listing update" },
+        { id: 3, text: "3 new property requests today" },
+    ];
+
+    const agentImages = [
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
+        "https://images.unsplash.com/photo-1501183638710-841dd1904471",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+    ];
+
     const listings = [
         { id: 1, title: "3 Bedroom Flat", location: "Ikoyi", price: "₦1.5M" },
         { id: 2, title: "Mini Flat", location: "Surulere", price: "₦600K" },
@@ -29,6 +43,29 @@ export default function AgentDashboard() {
                     <p>Manage listings, clients and performance</p>
                 </div>
 
+                <div className="notif-wrapper">
+
+                    <div className="bell-icon" onClick={() => setShowNotif(!showNotif)}>
+                        🔔
+                        <span className="notif-badge">{notifications.length}</span>
+                    </div>
+
+                    {showNotif && (
+                        <div className="notif-dropdown">
+
+                            <h4>Notifications</h4>
+
+                            {notifications.map(n => (
+                                <div key={n.id} className="notif-item">
+                                    {n.text}
+                                </div>
+                            ))}
+
+                        </div>
+                    )}
+
+                </div>
+
                 {/* STATS */}
                 <div className="stats-grid">
 
@@ -45,6 +82,30 @@ export default function AgentDashboard() {
                     <div className="stat-box">
                         <h3>Monthly Deals</h3>
                         <p>8</p>
+                    </div>
+
+                </div>
+
+                <div className="tools-grid">
+
+                    <div className="tool-card">
+                        🏠 <h4>Add Listing</h4>
+                        <p>Post new properties for landlords</p>
+                    </div>
+
+                    <div className="tool-card">
+                        👥 <h4>Client Hub</h4>
+                        <p>Manage all interested tenants</p>
+                    </div>
+
+                    <div className="tool-card">
+                        📊 <h4>Analytics</h4>
+                        <p>Track performance & conversions</p>
+                    </div>
+
+                    <div className="tool-card">
+                        💬 <h4>Messages</h4>
+                        <p>Chat with clients & landlords</p>
                     </div>
 
                 </div>
@@ -69,6 +130,7 @@ export default function AgentDashboard() {
 
                         {clients.map(c => (
                             <div className="request-row" key={c.id}>
+                                <img className="client-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" />
 
                                 <div>
                                     <strong>{c.name}</strong>
@@ -123,7 +185,7 @@ export default function AgentDashboard() {
                     <div className="listing-grid">
                         {listings.map(l => (
                             <div className="listing-card" key={l.id}>
-
+                                <img src={agentImages[l.id % agentImages.length]} alt={l.title} />
                                 <h4>{l.title}</h4>
                                 <p className="location">{l.location}</p>
                                 <p className="price">{l.price}</p>

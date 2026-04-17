@@ -10,6 +10,20 @@ export default function LandlordDashboard() {
         { id: 2, agent: "Agent Sarah", property: "Ikoyi Duplex", date: "5h ago" },
     ]);
 
+    const [showNotif, setShowNotif] = useState(false);
+
+    const notifications = [
+        { id: 1, text: "New viewing request for Lekki property" },
+        { id: 2, text: "Agent John submitted application" },
+        { id: 3, text: "Payment received for Ikoyi unit" },
+    ];
+
+    const landlordImages = [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c",
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
+    ];
+
     const listings = [
         { id: 1, title: "3 Bedroom Flat", status: "Active", price: "₦1.2M" },
         { id: 2, title: "2 Bedroom Apartment", status: "Rented", price: "₦800K" },
@@ -32,6 +46,27 @@ export default function LandlordDashboard() {
                     <p>Here’s a quick overview of your properties</p>
                 </div>
 
+                <div className="notif-wrapper">
+
+                    <div className="bell-icon" onClick={() => setShowNotif(!showNotif)}>
+                        🔔
+                        <span className="notif-badge">{notifications.length}</span>
+                    </div>
+
+                    {showNotif && (
+                        <div className="notif-dropdown">
+                            <h4>Notifications</h4>
+
+                            {notifications.map(n => (
+                                <div key={n.id} className="notif-item">
+                                    {n.text}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
+
                 {/* STATS */}
                 <div className="stats-grid">
 
@@ -48,6 +83,30 @@ export default function LandlordDashboard() {
                     <div className="stat-box">
                         <h3>Pending Requests</h3>
                         <p>{requests.length}</p>
+                    </div>
+
+                </div>
+
+                <div className="tools-grid">
+
+                    <div className="tool-card">
+                        🏠 <h4>Add Property</h4>
+                        <p>List a new rental unit</p>
+                    </div>
+
+                    <div className="tool-card">
+                        📊 <h4>Analytics</h4>
+                        <p>View income & performance</p>
+                    </div>
+
+                    <div className="tool-card">
+                        🤝 <h4>Manage Agents</h4>
+                        <p>Assign or remove agents</p>
+                    </div>
+
+                    <div className="tool-card">
+                        💰 <h4>Payments</h4>
+                        <p>Track rent payments</p>
                     </div>
 
                 </div>
@@ -134,6 +193,7 @@ export default function LandlordDashboard() {
                     <div className="listing-grid">
                         {listings.map(l => (
                             <div className="listing-card" key={l.id}>
+                                <img src={landlordImages[l.id % landlordImages.length]} alt={l.title} />
                                 <h4>{l.title}</h4>
                                 <p className="status">{l.status}</p>
                                 <p className="price">{l.price}</p>
