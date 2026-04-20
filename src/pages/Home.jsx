@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+
 // Images
 import homeone from "../assets/heroone.jpg";
 import hometwo from "../assets/herotwo.jpg";
@@ -100,7 +101,7 @@ export default function Home() {
 
                     <div className="nav-center">
                         <a href="#hero">Home</a>
-                        <a href="#search">Search</a>
+                        <a href="#affordability">Search</a>
                         <a href="#locations">Locations</a>
                         <a href="#properties">Properties</a>
                         <a href="#how-it-works">How It Works</a>
@@ -158,7 +159,7 @@ export default function Home() {
             </section>
 
             {/* AFFORDABILITY */}
-            <section className="affordability">
+            <section id="affordability" className="affordability">
                 <div className="affordability-container">
 
                     <h2>How Much Rent Can You Afford?</h2>
@@ -396,10 +397,10 @@ export default function Home() {
 
                         <h2><strong>Are you a landlord?</strong></h2>
 
-                        <div className="cta-box">
+                        <Link to="/insurance" className="cta-box">
                             <span>Find out why landlords love us</span>
                             <span className="arrow">→</span>
-                        </div>
+                        </Link>
 
                     </div>
 

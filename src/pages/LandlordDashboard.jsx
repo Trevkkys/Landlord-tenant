@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 export default function LandlordDashboard() {
 
@@ -109,6 +110,10 @@ export default function LandlordDashboard() {
                         <p>Track rent payments</p>
                     </div>
 
+                    <Link to="/insurance" className="tool-card">
+                        🔐 <h4>Insurance</h4>
+                        <p>Protect your property & rent</p>
+                    </Link>
                 </div>
 
                 {/* MAIN GRID */}

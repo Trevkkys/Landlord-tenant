@@ -66,20 +66,36 @@ export default function Profile() {
                     </div>
 
                     <div className="profile-info">
-                        <h2>{user?.name}</h2>
+                        <h2>{user?.name || "User Name"}</h2>
 
                         <div className="verified-badge">
                             ✔ Verified User
-                        </div>
-
-                        <div className="profile-role">
-                            {user?.role} Account
                         </div>
 
                         <div className="profile-reviews">
                             <span className="stars">{renderStars(rating)}</span>
                             <span className="rating-text">{rating} ★ Rating</span>
                         </div>
+                    </div>
+
+                </div>
+
+                {/* 🔥 PROFILE SUMMARY (NEW) */}
+                <div className="profile-summary">
+
+                    <div className="summary-card">
+                        <h4>Account Status</h4>
+                        <p>Active</p>
+                    </div>
+
+                    <div className="summary-card">
+                        <h4>Member Since</h4>
+                        <p>2026</p>
+                    </div>
+
+                    <div className="summary-card">
+                        <h4>Profile Completion</h4>
+                        <p>75%</p>
                     </div>
 
                 </div>
@@ -94,17 +110,64 @@ export default function Profile() {
                     ))}
                 </div>
 
+                {/* QUICK ACTIONS */}
+                <div className="profile-actions">
+
+                    <button onClick={() => navigate("/")}>
+                        Browse Properties
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            const role = user?.role?.toLowerCase();
+
+                            if (role === "tenant") navigate("/tenant");
+                            else if (role === "landlord") navigate("/landlord");
+                            else if (role === "agent") navigate("/agent");
+                            else navigate("/");
+                        }}
+                    >
+                        Go to Dashboard
+                    </button>
+
+                </div>
+
                 {/* MAIN */}
                 <div className="profile-container">
 
                     {/* SIDEBAR */}
                     <div className="profile-sidebar">
-                        <button onClick={() => setActiveTab("overview")}>Overview</button>
-                        <button onClick={() => setActiveTab("edit")}>Edit Profile</button>
-                        <button onClick={() => setActiveTab("password")}>Change Password</button>
-                        <button onClick={() => setActiveTab("bank")}>Bank Details</button>
-                        <button onClick={() => setActiveTab("reviews")}>Reviews</button>
-                        <button onClick={() => setActiveTab("help")}>Help & FAQ</button>
+
+                        <button className={activeTab === "overview" ? "active" : ""}
+                            onClick={() => setActiveTab("overview")}>
+                            Overview
+                        </button>
+
+                        <button className={activeTab === "edit" ? "active" : ""}
+                            onClick={() => setActiveTab("edit")}>
+                            Edit Profile
+                        </button>
+
+                        <button className={activeTab === "password" ? "active" : ""}
+                            onClick={() => setActiveTab("password")}>
+                            Change Password
+                        </button>
+
+                        <button className={activeTab === "bank" ? "active" : ""}
+                            onClick={() => setActiveTab("bank")}>
+                            Bank Details
+                        </button>
+
+                        <button className={activeTab === "reviews" ? "active" : ""}
+                            onClick={() => setActiveTab("reviews")}>
+                            Reviews
+                        </button>
+
+                        <button className={activeTab === "help" ? "active" : ""}
+                            onClick={() => setActiveTab("help")}>
+                            Help & FAQ
+                        </button>
+
                     </div>
 
                     {/* CONTENT */}
@@ -112,10 +175,43 @@ export default function Profile() {
 
                         {activeTab === "overview" && (
                             <div className="profile-box">
+
                                 <h3>Profile Overview</h3>
+
                                 <p><b>Name:</b> {user?.name}</p>
                                 <p><b>Email:</b> {user?.email}</p>
                                 <p><b>Role:</b> {user?.role}</p>
+
+                                {/* 🔥 ACTIVITY FEED */}
+                                <div className="activity-feed">
+
+                                    <h4>Recent Activity</h4>
+
+                                    <div className="activity-item">
+                                        Viewed: 2 Bedroom Apartment (Lekki)
+                                    </div>
+
+                                    <div className="activity-item">
+                                        Saved: Self Contain (Yaba)
+                                    </div>
+
+                                    <div className="activity-item">
+                                        Application sent to Ikoyi Duplex
+                                    </div>
+
+                                </div>
+
+                                {/* TRUST */}
+                                <div className="trust-section">
+
+                                    <h4>Trust & Safety</h4>
+
+                                    <p>✔ Verified Email</p>
+                                    <p>✔ Secure Login</p>
+                                    <p>✔ Activity Monitored</p>
+
+                                </div>
+
                             </div>
                         )}
 

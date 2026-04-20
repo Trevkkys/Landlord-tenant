@@ -8,6 +8,8 @@ export default function Navbar() {
 
     const role = user?.role?.toLowerCase(); // ✅ FIX: normalize role
 
+    const isLoggedIn = !!user;
+
     const logout = () => {
         localStorage.removeItem("vitRentUser");
         navigate("/login");
@@ -39,34 +41,51 @@ export default function Navbar() {
             {/* NAV LINKS */}
             <div className="dashboard-nav-links">
 
+                {/* NOT LOGGED IN (PUBLIC NAVBAR) */}
+                {!isLoggedIn && (
+                    <>
+                        <span onClick={() => navigate("/")}>Home</span>
+                        <span onClick={() => navigate("/login")}>Login</span>
+                        <span onClick={() => navigate("/register")}>Register</span>
+                    </>
+                )}
+
+                {/* LOGGED IN - LANDLORD */}
                 {role === "landlord" && (
                     <>
+                        <span onClick={() => navigate("/")}>Home</span>
                         <span onClick={() => navigate("/landlord")}>Dashboard</span>
                         <span onClick={() => navigate("/profile")}>Profile</span>
                     </>
                 )}
 
+                {/* LOGGED IN - TENANT */}
                 {role === "tenant" && (
                     <>
+                        <span onClick={() => navigate("/")}>Home</span>
                         <span onClick={() => navigate("/tenant")}>Search</span>
                         <span onClick={() => navigate("/profile")}>Profile</span>
                     </>
                 )}
 
+                {/* LOGGED IN - AGENT */}
                 {role === "agent" && (
                     <>
+                        <span onClick={() => navigate("/")}>Home</span>
                         <span onClick={() => navigate("/agent")}>Dashboard</span>
                         <span onClick={() => navigate("/profile")}>Profile</span>
                     </>
                 )}
 
-                {/* LOGOUT */}
-                <span
-                    onClick={logout}
-                    style={{ color: "black", fontWeight: "bold", cursor: "pointer" }}
-                >
-                    Logout
-                </span>
+                {/* LOGOUT (ONLY WHEN LOGGED IN) */}
+                {isLoggedIn && (
+                    <span
+                        onClick={logout}
+                        style={{ color: "black", fontWeight: "bold", cursor: "pointer" }}
+                    >
+                        Logout
+                    </span>
+                )}
 
             </div>
 
