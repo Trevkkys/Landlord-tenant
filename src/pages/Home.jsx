@@ -173,10 +173,16 @@ export default function Home() {
 
                     <button
                         onClick={() => {
-                            const income = document.getElementById("incomeInput").value;
-                            const rent = Math.round((income * 0.3) / 12);
+                            const income = Number(document.getElementById("incomeInput").value);
 
-                            alert(`You can afford approx ₦${rent.toLocaleString()} per month rent`);
+                            if (!income) return;
+
+                            const minRent = Math.round(income * 0.25);
+                            const maxRent = Math.round(income * 0.30);
+
+                            alert(
+                                `You can afford approx ₦${minRent.toLocaleString()} – ₦${maxRent.toLocaleString()} per month rent`
+                            );
                         }}
                     >
                         Calculate

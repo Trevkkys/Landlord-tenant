@@ -10,6 +10,13 @@ import LandlordDashboard from "./pages/LandlordDashboard";
 import AgentDashboard from "./pages/AgentDashboard";
 import Profile from "./pages/Profile";
 import Insurance from "./pages/Insurance";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminProperties from "./pages/admin/AdminProperties";
+import AdminTransactions from "./pages/admin/AdminTransactions";
+import AdminDisputes from "./pages/admin/AdminDisputes";
+
 
 export default function App() {
   return (
@@ -20,6 +27,12 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/properties" element={<AdminProperties />} />
+        <Route path="/admin/transactions" element={<AdminTransactions />} />
+        <Route path="/admin/disputes" element={<AdminDisputes />} />
         <Route path="/tenant" element={<TenantDashboard />} />
         <Route path="/landlord" element={<LandlordDashboard />} />
         <Route path="/agent" element={<AgentDashboard />} />

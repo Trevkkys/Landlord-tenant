@@ -6,7 +6,10 @@ export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [role, setRole] = useState("");
+    const [showVitelModal, setShowVitelModal] = useState(false);
+    const [vitelNumber, setVitelNumber] = useState("");
 
     const navigate = useNavigate();
 
@@ -63,12 +66,22 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                     />
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <div className="password-field">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Enter password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+
+                        <span
+                            className="eye-icon"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? "🙈" : "👁️"}
+                        </span>
+                    </div>
 
                     {/* ROLE SELECTOR */}
                     <p className="role-title">Select your role</p>
@@ -91,6 +104,14 @@ export default function Login() {
                         Login
                     </button>
 
+                    <div
+                        className="vitel-auth-box"
+                        onClick={() => setShowVitelModal(true)}
+                    >
+                        <span className="vitel-text">or sign in with</span>
+                        <img src="/vitel-logo.png" alt="Vitel Wireless" />
+                    </div>
+
                     <p className="signup-text">
                         New user?{" "}
                         <span onClick={() => navigate("/register")}>
@@ -103,6 +124,51 @@ export default function Login() {
                         <Link to="/" className="back-link">
                             ← Back to Home
                         </Link>
+
+                        {showVitelModal && (
+                            <div className="vitel-overlay">
+                                <div className="vitel-modal">
+
+                                    {/* HEADER */}
+                                    <div className="vitel-modal-header">
+                                        <img src="/phone-icon.png" alt="phone" />
+                                        <h2>Sign In with Vitel</h2>
+                                    </div>
+
+                                    <p className="vitel-subtext">
+                                        We'll send a one-time code to your number
+                                    </p>
+
+                                    {/* INPUT */}
+                                    <div className="vitel-input-box">
+                                        <input
+                                            type="text"
+                                            placeholder="Vitel Number"
+                                            value={vitelNumber}
+                                            onChange={(e) => setVitelNumber(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <p className="vitel-info">
+                                        ⓘ  All Vitel numbers start with 0712
+                                    </p>
+
+                                    {/* BUTTON */}
+                                    <button className="vitel-otp-btn">
+                                        Send OTP
+                                    </button>
+
+                                    {/* CLOSE */}
+                                    <span
+                                        className="vitel-close"
+                                        onClick={() => setShowVitelModal(false)}
+                                    >
+                                        ✕
+                                    </span>
+
+                                </div>
+                            </div>
+                        )}
 
 
                     </div>
