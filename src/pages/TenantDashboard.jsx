@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export default function TenantDashboard() {
 
     const [search, setSearch] = useState("");
-
+    const navigate = useNavigate();
     const [showNotif, setShowNotif] = useState(false);
 
     const notifications = [
@@ -130,7 +131,7 @@ export default function TenantDashboard() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <button className="primary">Search</button>
+                    <button className="primary" onClick={() => navigate("/properties")}>Search</button>
                 </div>
 
                 {/* FILTERS */}

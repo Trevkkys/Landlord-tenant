@@ -4,11 +4,19 @@ import { useNavigate } from "react-router-dom";
 export default function Navbar() {
     const navigate = useNavigate();
 
-    const user = JSON.parse(localStorage.getItem("vitRentUser"));
+    let user = null;
 
-    const role = user?.role?.toLowerCase(); // ✅ FIX: normalize role
+    try {
+        user = JSON.parse(localStorage.getItem("vitRentUser"));
+    } catch (e) {
+        user = null;
+    }
 
-    const isLoggedIn = !!user;
+    const isLoggedIn =
+        user &&
+        user.email &&
+        user.email.trim() !== "";
+    const role = user?.role?.toLowerCase() || null;
 
     const logout = () => {
         localStorage.removeItem("vitRentUser");
@@ -23,72 +31,68 @@ export default function Navbar() {
                 VitRent
             </h3>
 
-            {/* ROLE BADGE (NEW - CLEAN INDICATOR) */}
-            {role && (
-                <span style={{
-                    marginLeft: "10px",
-                    fontSize: "12px",
-                    padding: "4px 10px",
-                    borderRadius: "20px",
-                    background: "#fff",
-                    color: "#069494",
-                    fontWeight: "bold"
-                }}>
-                    {role.toUpperCase()}
-                </span>
-            )}
-
-            {/* NAV LINKS */}
             <div className="dashboard-nav-links">
 
-                {/* NOT LOGGED IN (PUBLIC NAVBAR) */}
+                {/* =========================
+        🔓 NOT LOGGED IN (ONLY PUBLIC LINKS)
+    ========================= */}
                 {!isLoggedIn && (
                     <>
                         <span onClick={() => navigate("/")}>Home</span>
+                        <span onClick={() => navigate("/properties")}>Properties</span>
                         <span onClick={() => navigate("/login")}>Login</span>
                         <span onClick={() => navigate("/register")}>Register</span>
                     </>
                 )}
 
-                {/* LOGGED IN - LANDLORD */}
-                {role === "landlord" && (
-                    <>
-                        <span onClick={() => navigate("/")}>Home</span>
-                        <span onClick={() => navigate("/landlord")}>Dashboard</span>
-                        <span onClick={() => navigate("/profile")}>Profile</span>
-                    </>
-                )}
-
-                {/* LOGGED IN - TENANT */}
-                {role === "tenant" && (
-                    <>
-                        <span onClick={() => navigate("/")}>Home</span>
-                        <span onClick={() => navigate("/tenant")}>Search</span>
-                        <span onClick={() => navigate("/profile")}>Profile</span>
-                    </>
-                )}
-
-                {/* LOGGED IN - AGENT */}
-                {role === "agent" && (
-                    <>
-                        <span onClick={() => navigate("/")}>Home</span>
-                        <span onClick={() => navigate("/agent")}>Dashboard</span>
-                        <span onClick={() => navigate("/profile")}>Profile</span>
-                    </>
-                )}
-
-                {/* LOGOUT (ONLY WHEN LOGGED IN) */}
+                {/* =========================
+        🔐 LOGGED IN (APP LINKS ONLY)
+    ========================= */}
                 {isLoggedIn && (
-                    <span
-                        onClick={logout}
-                        style={{ color: "black", fontWeight: "bold", cursor: "pointer" }}
-                    >
-                        Logout
-                    </span>
+                    <>
+                        <span onClick={() => navigate("/")}>Home</span>
+
+                        {/* ONLY TENANT CAN SEE PROPERTIES */}
+                        {role === "tenant" && (
+                            <>
+                                <span onClick={() => navigate("/properties")}>Properties</span>
+                                <span onClick={() => navigate("/tenant")}>Dashboard</span>
+                            </>
+                        )}
+
+                        {/* LANDLORD - NO LIST PROPERTY */}
+                        {role === "landlord" && (
+                            <>
+                                <span onClick={() => navigate("/landlord")}>Dashboard</span>
+                            </>
+                        )}
+
+                        {/* AGENT - NO LIST PROPERTY */}
+                        {role === "agent" && (
+                            <>
+                                <span onClick={() => navigate("/agent")}>Dashboard</span>
+                            </>
+                        )}
+
+                        <span onClick={() => navigate("/profile")}>Profile</span>
+
+                        <span
+                            onClick={() => {
+                                localStorage.removeItem("vitRentUser");
+                                navigate("/login");
+                            }}
+                            style={{
+                                color: "black",
+                                fontWeight: "bold",
+                                cursor: "pointer"
+                            }}
+                        >
+                            Logout
+                        </span>
+                    </>
                 )}
 
             </div>
-
-        </nav>
+        </nav >
     );
 }

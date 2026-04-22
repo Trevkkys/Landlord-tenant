@@ -44,6 +44,7 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    color: #069494;
 }
 
 .admin-header p {
@@ -121,6 +122,29 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.logout-btn {
+    background-color: #069494;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #069494;
+}
+
+/* Header alignment */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* FILTERS */

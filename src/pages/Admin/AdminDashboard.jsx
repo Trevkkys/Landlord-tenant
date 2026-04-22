@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Admin.css";
 
@@ -7,11 +7,20 @@ export default function AdminDashboard() {
 
     const user = JSON.parse(localStorage.getItem("vitRentUser"));
 
-    // 🔐 PROTECT ADMIN
-    if (!user || user.role !== "admin") {
+    // 🔐 PROTECT ADMIN (FIXED)
+    useEffect(() => {
+        if (!user || user.role !== "admin") {
+            navigate("/");
+        }
+    }, [user, navigate]);
+
+    // 🔴 LOGOUT FUNCTION
+    const handleLogout = () => {
+        localStorage.removeItem("vitRentUser");
         navigate("/");
-        return null;
-    }
+    };
+
+    if (!user) return null;
 
     return (
         <div className="admin-layout">
@@ -28,6 +37,11 @@ export default function AdminDashboard() {
                     <p onClick={() => navigate("/admin/transactions")}>Transactions</p>
                     <p onClick={() => navigate("/admin/disputes")}>Disputes</p>
                 </nav>
+
+                {/* 🔴 LOGOUT BUTTON IN SIDEBAR */}
+                <button className="logout-btn" onClick={handleLogout}>
+                    Logout
+                </button>
             </div>
 
             {/* MAIN CONTENT */}
@@ -35,8 +49,14 @@ export default function AdminDashboard() {
 
                 {/* HEADER */}
                 <div className="admin-header">
-                    <h2>Admin Dashboard</h2>
-                    <p>Welcome, {user.name}👋🏾</p>
+                    <div>
+                        <h2>Welcome, {user.name} 👋🏾</h2>
+                    </div>
+
+                    {/* 🔴 LOGOUT (TOP RIGHT OPTION) */}
+                    <button className="logout-btn" onClick={handleLogout}>
+                        Logout
+                    </button>
                 </div>
 
                 {/* STATS */}

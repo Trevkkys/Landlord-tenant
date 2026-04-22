@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 // Images
@@ -60,6 +61,7 @@ export default function Home() {
     const heroImages = [homeone, hometwo, homethree, homefour, homefive, heroimg];
     const [current, setCurrent] = useState(0);
     const [favorites, setFavorites] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -131,14 +133,14 @@ export default function Home() {
 
                     <div className="hero-search">
                         <input type="text" placeholder="Search location (Lekki, Yaba...)" />
-                        <button>Search</button>
+                        <button onClick={() => navigate("/properties")}>Search</button>
                     </div>
 
                     <div className="hero-actions">
-                        <div className="action-card">🏠 Find Home</div>
-                        <div className="action-card">🏢 List Property</div>
-                        <div className="action-card">🤝 Become Agent</div>
-                        <div className="action-card">📍 Browse Locations</div>
+                        <div className="action-card" onClick={() => navigate("/properties")}>🏠 Find Home</div>
+                        <div className="action-card" onClick={() => navigate("/list-property")}>🏢 List Property</div>
+                        <div className="action-card" onClick={() => window.location.href = "/register"}>🤝 Become Agent</div>
+                        <div className="action-card" onClick={() => navigate("/properties")}>📍 Browse Locations</div>
                     </div>
 
                 </div>
@@ -435,7 +437,7 @@ export default function Home() {
                     <div className="cta-card">
                         <h3>🏢 List Property</h3>
                         <p>Landlords can publish and manage listings</p>
-                        <button onClick={() => window.location.href = "/register"}>
+                        <button onClick={() => navigate("/list-property")}>
                             Get Started
                         </button>
                     </div>

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LandlordDashboard() {
 
     const user = JSON.parse(localStorage.getItem("vitUser"));
+
+    const navigate = useNavigate();
 
     const [requests, setRequests] = useState([
         { id: 1, agent: "Agent John", property: "Lekki 2 Bedroom", date: "2h ago" },
@@ -44,7 +47,7 @@ export default function LandlordDashboard() {
                 {/* HEADER */}
                 <div className="dashboard-header">
                     <h2>Good morning, {user?.name || "User"} 👋</h2>
-                    <p>Here’s a quick overview of your properties</p>
+                    <p>Here is a quick overview of your properties</p>
                 </div>
 
                 <div className="notif-wrapper">
@@ -90,7 +93,9 @@ export default function LandlordDashboard() {
 
                 <div className="tools-grid">
 
-                    <div className="tool-card">
+                    <div
+                        className="tool-card"
+                        onClick={() => navigate("/list-property")}>
                         🏠 <h4>Add Property</h4>
                         <p>List a new rental unit</p>
                     </div>

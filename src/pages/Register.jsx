@@ -34,7 +34,6 @@ export default function Register() {
             return;
         }
 
-        // USER OBJECT
         const user = {
             name,
             email,
@@ -45,12 +44,11 @@ export default function Register() {
         // SAVE USER
         localStorage.setItem("vitRentUser", JSON.stringify(user));
 
-        // ROUTE BY ROLE
-        if (role === "Landlord") navigate("/landlord");
-        if (role === "Tenant") navigate("/tenant");
-        if (role === "Agent") navigate("/agent");
-    };
-
+        // ROUTE BY ROLE (FIXED)
+        if (role.toLowerCase() === "landlord") navigate("/landlord");
+        if (role.toLowerCase() === "tenant") navigate("/tenant");
+        if (role.toLowerCase() === "agent") navigate("/agent");
+    }
     return (
         <div className="auth-page">
 

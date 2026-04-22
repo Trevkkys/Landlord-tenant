@@ -20,19 +20,23 @@ export default function Login() {
             return;
         }
 
+        if (!email || email.trim() === "") {
+            alert("Email is required");
+            return;
+        }
+
         const user = {
             name: "John Doe",
-            email,
+            email: email.trim(),
             role: role.toLowerCase()
         };
 
         localStorage.setItem("vitRentUser", JSON.stringify(user));
 
-        if (role === "Landlord") navigate("/landlord");
-        if (role === "Tenant") navigate("/tenant");
-        if (role === "Agent") navigate("/agent");
-    };
-
+        if (role.toLowerCase() === "landlord") navigate("/landlord");
+        if (role.toLowerCase() === "tenant") navigate("/tenant");
+        if (role.toLowerCase() === "agent") navigate("/agent");
+    }
     return (
         <div className="auth-page">
 

@@ -119,12 +119,19 @@ export default function Profile() {
 
                     <button
                         onClick={() => {
-                            const role = user?.role?.toLowerCase();
+                            const storedUser = JSON.parse(localStorage.getItem("vitRentUser"));
+                            const role = (storedUser?.role || "").toLowerCase();
 
-                            if (role === "tenant") navigate("/tenant");
-                            else if (role === "landlord") navigate("/landlord");
-                            else if (role === "agent") navigate("/agent");
-                            else navigate("/");
+                            if (role === "tenant") {
+                                navigate("/tenant");
+                            } else if (role === "landlord") {
+                                navigate("/landlord");
+                            } else if (role === "agent") {
+                                navigate("/agent");
+                            } else {
+                                alert("Session error. Please login again.");
+                                navigate("/login");
+                            }
                         }}
                     >
                         Go to Dashboard

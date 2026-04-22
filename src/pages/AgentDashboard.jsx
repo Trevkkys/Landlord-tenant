@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export default function AgentDashboard() {
 
@@ -30,6 +31,8 @@ export default function AgentDashboard() {
     const removeClient = (id) => {
         setClients(clients.filter(c => c.id !== id));
     };
+
+    const navigate = useNavigate();
 
     return (
         <div className="dashboard-layout">
@@ -88,7 +91,8 @@ export default function AgentDashboard() {
 
                 <div className="tools-grid">
 
-                    <div className="tool-card">
+                    <div className="tool-card"
+                        onClick={() => navigate("/list-property")}>
                         🏠 <h4>Add Listing</h4>
                         <p>Post new properties for landlords</p>
                     </div>
@@ -112,7 +116,7 @@ export default function AgentDashboard() {
 
                 {/* QUICK ACTIONS */}
                 <div className="agent-actions">
-                    <button className="primary">+ Add Property</button>
+                    <button className="primary" onClick={() => navigate("/list-property")}>+ Add Property</button>
                     <button className="primary outline">View Clients</button>
                     <button className="primary outline">Analytics</button>
                 </div>

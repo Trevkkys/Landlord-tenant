@@ -1,0 +1,173 @@
+/* =========================
+   PAGE LAYOUT (REPLACED)
+========================= */
+.list-property-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================
+   LEFT SIDE (was auth-left)
+========================= */
+.list-property-left {
+    flex: 1;
+    background: #069494;
+    color: white;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.list-property-left h1 {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.list-property-left p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* FEATURES */
+.list-property-features p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+/* =========================
+   RIGHT SIDE (was auth-right)
+========================= */
+.list-property-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f7fafa;
+    padding: 60px;
+}
+
+/* =========================
+   FORM CARD (was auth-card)
+========================= */
+.list-property-card {
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.list-property-card h2 {
+    margin-bottom: 5px;
+}
+
+.list-property-card p {
+    margin-bottom: 20px;
+    color: gray;
+}
+
+/* =========================
+   INPUTS
+========================= */
+.list-property-card input,
+.list-property-card select,
+.list-property-card textarea {
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.list-property-card textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+/* =========================
+   ROW INPUTS
+========================= */
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-row input {
+    flex: 1;
+}
+
+/* =========================
+   ROLE BUTTONS
+========================= */
+.role-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0 20px;
+}
+
+.role-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.role-active {
+    background: #069494;
+    color: white;
+    border: none;
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #069494;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: #057777;
+}
+
+/* =========================
+   BACK LINK
+========================= */
+.auth-back {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.back-link {
+    color: #069494;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+    .list-property-page {
+        flex-direction: column;
+    }
+
+    .list-property-left {
+        text-align: center;
+        padding: 30px;
+    }
+}

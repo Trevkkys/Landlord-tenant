@@ -16,6 +16,8 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminProperties from "./pages/admin/AdminProperties";
 import AdminTransactions from "./pages/admin/AdminTransactions";
 import AdminDisputes from "./pages/admin/AdminDisputes";
+import ListProperty from "./pages/ListProperty";
+import Properties from "./pages/Properties";
 
 
 export default function App() {
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="/agent" element={<AgentDashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/insurance" element={<Insurance />} />
+        <Route path="/list-property" element={<ListProperty />} />
+        <Route path="/properties" element={<Properties />} />
       </Routes >
     </>
   );

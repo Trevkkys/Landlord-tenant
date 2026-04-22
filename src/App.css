@@ -2438,7 +2438,7 @@ body {
 /* CARD */
 .auth-card {
   width: 80%;
-  max-width: 400px;
+  max-width: 500px;
   background: white;
   padding: 30px;
   border-radius: 16px;
