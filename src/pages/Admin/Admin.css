@@ -92,6 +92,37 @@
     background: #a30000;
 }
 
+.admin-top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 25px;
+}
+
+/* BACK BUTTON */
+.back-desktop-btn {
+    padding: 8px 14px;
+    border: 1px solid #069494;
+    background: transparent;
+    color: #069494;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.back-desktop-btn:hover {
+    background: #069494;
+    color: white;
+}
+
+/* OPTIONAL: makes filters align better when used with top bar */
+.admin-filters-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 /* ACTIVITY FEED */
 .admin-activity {
     background: white;
@@ -149,25 +180,32 @@
 
 /* FILTERS */
 .user-filters {
-    margin-bottom: 15px;
+    margin: 25px 0;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .user-filters button {
     margin-right: 10px;
-    padding: 6px 12px;
-    border: 1px solid #ef4444;
+    padding: 8px 14px;
+    border: 1px solid #8b0000;
     background: transparent;
-    color: #ef4444;
-    border-radius: 6px;
+    color: #8b0000;
+    border-radius: 8px;
     cursor: pointer;
     transition: 0.2s;
 }
 
 .user-filters button:hover {
-    background: #ef4444;
+    background: #8b0000;
+    color: white;
+}
+
+/* ACTIVE STATE (optional but recommended) */
+.user-filters button.active {
+    background: #8b0000;
     color: white;
 }
 
@@ -515,4 +553,140 @@
 
 .dispute-actions button:hover {
     background: #a30000;
+}
+
+/* =========================
+   ADMIN ANALYTICS (NEW MODULE)
+========================= */
+
+.admin-analytics-page {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* HEADER */
+.admin-analytics-header {
+    margin-bottom: 20px;
+}
+
+.admin-analytics-header h2 {
+    color: #8b0000;
+}
+
+.admin-analytics-header p {
+    color: #069494;
+    font-weight: 500;
+}
+
+/* KPI GRID */
+.admin-analytics-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-analytics-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    border-left: 4px solid #8b0000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin-analytics-card h4 {
+    font-size: 13px;
+    color: #666;
+}
+
+.admin-analytics-card h2 {
+    color: #8b0000;
+    margin-top: 8px;
+}
+
+/* CHART GRID */
+.admin-analytics-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.admin-analytics-chart {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.admin-analytics-chart h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* FULL WIDTH CHART */
+.admin-analytics-chart.full {
+    grid-column: span 2;
+}
+
+/* FILTER BUTTONS */
+.analytics-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.analytics-filters button {
+    padding: 7px 12px;
+    border: 1px solid #8b0000;
+    background: transparent;
+    color: #8b0000;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.analytics-filters button:hover {
+    background: #8b0000;
+    color: white;
+}
+
+/* TRANSACTIONS (REUSE BUT CLEANER) */
+.analytics-transactions {
+    margin-top: 20px;
+}
+
+.analytics-transaction-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* STATUS (reuse your system but safer scoped) */
+.analytics-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.analytics-status.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.analytics-status.pending {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.analytics-status.escrow {
+    background: #fef3c7;
+    color: #92400e;
 }

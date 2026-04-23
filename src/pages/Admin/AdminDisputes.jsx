@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./Admin.css";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminDisputes() {
     const [filter, setFilter] = useState("open");
+    const navigate = useNavigate();
 
     const disputes = [
         {
@@ -95,12 +97,20 @@ export default function AdminDisputes() {
                             <button>Resolve</button>
                             <button>Escalate</button>
                         </div>
-
                     </div>
                 ))}
-
             </div>
 
+            <div className="admin-top-actions">
+
+                {/* LEFT SIDE - BACK BUTTON */}
+                <button
+                    className="back-desktop-btn"
+                    onClick={() => navigate("/admin/dashboard")}
+                >
+                    ← Back to Dashboard
+                </button>
+            </div>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function AgentDashboard() {
 
@@ -92,7 +92,12 @@ export default function AgentDashboard() {
                 <div className="tools-grid">
 
                     <div className="tool-card"
-                        onClick={() => navigate("/list-property")}>
+                        onClick={() =>
+                            navigate("/list-property", {
+                                state: { fromDashboard: true }
+                            })
+                        }
+                    >
                         🏠 <h4>Add Listing</h4>
                         <p>Post new properties for landlords</p>
                     </div>
@@ -102,7 +107,8 @@ export default function AgentDashboard() {
                         <p>Manage all interested tenants</p>
                     </div>
 
-                    <div className="tool-card">
+                    <div className="tool-card"
+                        onClick={() => navigate("/agent/analytics")}>
                         📊 <h4>Analytics</h4>
                         <p>Track performance & conversions</p>
                     </div>
@@ -116,9 +122,14 @@ export default function AgentDashboard() {
 
                 {/* QUICK ACTIONS */}
                 <div className="agent-actions">
-                    <button className="primary" onClick={() => navigate("/list-property")}>+ Add Property</button>
+                    <button className="primary" onClick={() =>
+                        navigate("/list-property", {
+                            state: { fromDashboard: true }
+                        })
+                    }
+                    >+ Add Property</button>
                     <button className="primary outline">View Clients</button>
-                    <button className="primary outline">Analytics</button>
+                    <button className="primary outline" onClick={() => navigate("/agent/analytics")}>Analytics</button>
                 </div>
 
                 {/* MAIN GRID */}

@@ -1,13 +1,42 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "./Properties.css";
 
 export default function Properties() {
-
     const navigate = useNavigate();
+    const location = useLocation();
+
     const [filter, setFilter] = useState("all");
     const [search, setSearch] = useState("");
+
+    const rawUser = localStorage.getItem("vitRentUser");
+
+    let user = null;
+
+    try {
+        user = rawUser ? JSON.parse(rawUser) : null;
+    } catch (e) {
+        user = null;
+    }
+
+    // HARD GUARD (this is what actually fixes your issue)
+    const isLoggedIn =
+        !!user &&
+        typeof user === "object" &&
+        user.email?.trim() &&
+        user.role?.trim();
+
+    const role = isLoggedIn ? user.role.toLowerCase() : null;
+
+    const fromDashboard = location.state?.fromDashboard;
+
+    const getDashboard = () => {
+        if (role === "tenant") return "/tenant";
+        if (role === "landlord") return "/landlord";
+        if (role === "agent") return "/agent";
+        return "/";
+    };
 
     const properties = [
         {
@@ -224,9 +253,23 @@ export default function Properties() {
 
                         </div>
                     ))}
-
                 </div>
 
+                {isLoggedIn && role && (
+                    <div
+                        style={{
+                            marginTop: "40px",
+                            marginLeft: "40px"
+                        }}
+                    >
+                        <button
+                            className="back-desktop-btn"
+                            onClick={() => navigate(getDashboard())}
+                        >
+                            ← Back to Dashboard
+                        </button>
+                    </div>
+                )}
             </div>
         </>
     );

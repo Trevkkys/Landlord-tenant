@@ -1,7 +1,12 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Insurance() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const fromDashboard = location.state?.fromDashboard;
 
     return (
         <>
@@ -128,6 +133,17 @@ export default function Insurance() {
                     <h2>Secure Your Investment Today</h2>
                     <button className="primary">Get Insurance</button>
                 </div>
+
+                {fromDashboard && (
+                    <div className="admin-footer-action">
+                        <button
+                            className="back-desktop-btn"
+                            onClick={() => navigate(-1)}
+                        >
+                            ← Back to Dashboard
+                        </button>
+                    </div>
+                )}
 
             </section>
         </>

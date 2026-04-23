@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LandlordDashboard() {
 
@@ -95,12 +95,18 @@ export default function LandlordDashboard() {
 
                     <div
                         className="tool-card"
-                        onClick={() => navigate("/list-property")}>
+                        onClick={() =>
+                            navigate("/list-property", {
+                                state: { fromDashboard: true }
+                            })
+                        }
+                    >
                         🏠 <h4>Add Property</h4>
                         <p>List a new rental unit</p>
                     </div>
 
-                    <div className="tool-card">
+                    <div className="tool-card"
+                        onClick={() => navigate("/landlord/analytics")}>
                         📊 <h4>Analytics</h4>
                         <p>View income & performance</p>
                     </div>
@@ -115,7 +121,11 @@ export default function LandlordDashboard() {
                         <p>Track rent payments</p>
                     </div>
 
-                    <Link to="/insurance" className="tool-card">
+                    <Link
+                        to="/insurance"
+                        state={{ fromDashboard: true }}
+                        className="tool-card"
+                    >
                         🔐 <h4>Insurance</h4>
                         <p>Protect your property & rent</p>
                     </Link>

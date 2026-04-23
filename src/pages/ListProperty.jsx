@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ListProperty.css";
 import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ListProperty() {
 
@@ -16,8 +17,22 @@ export default function ListProperty() {
         status: "available",
     });
 
+    const getDashboard = () => {
+        if (userRole === "landlord") return "/landlord";
+        if (userRole === "agent") return "/agent";
+        if (userRole === "tenant") return "/tenant";
+        return "/";
+    };
+
+    const user = JSON.parse(localStorage.getItem("vitRentUser"));
+    const userRole = user?.role?.toLowerCase();
+
     const [imageSource, setImageSource] = useState("");
     const [role, setRole] = useState("");
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const fromDashboard = location.state?.fromDashboard;
 
     const handleChange = (e) => {
         setFormData({
@@ -205,6 +220,17 @@ export default function ListProperty() {
                         <Link to="/" className="back-link">
                             ← Back to Home
                         </Link>
+
+                        {/* ONLY FROM DASHBOARD */}
+                        {fromDashboard && (
+                            <button
+                                className="back-desktop-btn"
+                                onClick={() => navigate(getDashboard())}
+                            >
+                                ← Back to Dashboard
+                            </button>
+                        )}
+
                     </div>
 
                 </div>
@@ -212,5 +238,6 @@ export default function ListProperty() {
             </div>
 
         </div>
+
     );
 }

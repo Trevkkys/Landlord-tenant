@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./Admin.css";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminUsers() {
     const [filter, setFilter] = useState("all");
     const [search, setSearch] = useState("");
+    const navigate = useNavigate();
 
     const [users, setUsers] = useState([
         { id: 1, name: "Mr Onoja", role: "Tenant", status: "active", joined: "Joined Jan 2026" },
@@ -97,6 +99,16 @@ export default function AdminUsers() {
 
             </div>
 
+            <div className="admin-top-actions">
+
+                {/* LEFT SIDE - BACK BUTTON */}
+                <button
+                    className="back-desktop-btn"
+                    onClick={() => navigate("/admin/dashboard")}
+                >
+                    ← Back to Dashboard
+                </button>
+            </div>
         </div>
     );
 }

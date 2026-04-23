@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "./Admin.css";
+import { useNavigate } from "react-router-dom";
 import homeone from "../../assets/heroone.jpg";
 import hometwo from "../../assets/herotwo.jpg";
 import homethree from "../../assets/herothree.jpg";
 
 export default function AdminProperties() {
     const [filter, setFilter] = useState("all");
-
+    const navigate = useNavigate();
     const [properties, setProperties] = useState([
         {
 
@@ -106,9 +107,18 @@ export default function AdminProperties() {
 
                     </div>
                 ))}
-
             </div>
 
+            <div className="admin-top-actions">
+
+                {/* LEFT SIDE - BACK BUTTON */}
+                <button
+                    className="back-desktop-btn"
+                    onClick={() => navigate("/admin/dashboard")}
+                >
+                    ← Back to Dashboard
+                </button>
+            </div>
         </div>
     );
 }
