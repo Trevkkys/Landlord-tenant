@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -7,9 +9,13 @@ export default function Register() {
     // FORM STATES
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [city, setCity] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showNin, setShowNin] = useState(false);
+    const [countryCode, setCountryCode] = useState("+234");
+    const [nin, setNin] = useState("");
     const [role, setRole] = useState("");
     const [agree, setAgree] = useState(false);
 
@@ -19,13 +25,25 @@ export default function Register() {
 
     const handleRegister = () => {
         // VALIDATION
-        if (!name || !email || !city || !password || !confirmPassword || !role) {
+        if (!name || !email || !phone || !city || !password || !confirmPassword || !nin || !role) {
             alert("Please fill all fields");
             return;
         }
 
         if (password !== confirmPassword) {
             alert("Passwords do not match");
+            return;
+        }
+
+        // PHONE VALIDATION (basic)
+        if (!/^\d{10,15}$/.test(phone)) {
+            alert("Enter a valid phone number");
+            return;
+        }
+
+        // NIN VALIDATION (11 digits)
+        if (!/^\d{11}$/.test(nin)) {
+            alert("NIN must be exactly 11 digits");
             return;
         }
 
@@ -37,6 +55,8 @@ export default function Register() {
         const user = {
             name,
             email,
+            phone: countryCode + phone,
+            nin,
             city,
             role: role.toLowerCase(),
         };
@@ -49,6 +69,15 @@ export default function Register() {
         if (role.toLowerCase() === "tenant") navigate("/tenant");
         if (role.toLowerCase() === "agent") navigate("/agent");
     }
+
+    const maskNIN = (value) => {
+        if (value.length <= 4) return value;
+        const start = value.slice(0, 3);
+        const end = value.slice(-2);
+        const masked = "*".repeat(value.length - 5);
+        return start + masked + end;
+    };
+
     return (
         <div className="auth-page">
 
@@ -85,6 +114,14 @@ export default function Register() {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                    />
+
+                    {/* PHONE */}
+                    <PhoneInput
+                        international
+                        defaultCountry="NG"
+                        value={phone}
+                        onChange={setPhone}
                     />
 
                     {/* CITY */}
@@ -127,6 +164,24 @@ export default function Register() {
                             }
                         >
                             {showConfirmPassword ? "🙈" : "👁️"}
+                        </span>
+                    </div>
+
+                    {/* NIN */}
+                    <div className="password-field">
+                        <input
+                            type={showNin ? "text" : "password"}
+                            placeholder="NIN (11-digit National ID Number)"
+                            value={nin}
+                            onChange={(e) => setNin(e.target.value.replace(/\D/g, ""))}
+                        />
+
+                        <span
+                            className="eye-icon"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => setShowNin(!showNin)}
+                        >
+                            {showNin ? "🙈" : "👁️"}
                         </span>
                     </div>
 

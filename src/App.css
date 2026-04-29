@@ -2479,6 +2479,50 @@ body {
   box-sizing: border-box;
 }
 
+.PhoneInput {
+  display: flex;
+  align-items: center;
+  height: 45px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+}
+
+.PhoneInputInput {
+  height: 45px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.phone-input-custom {
+  width: 100% !important;
+  height: 45px !important;
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.PhoneInputCountrySelect,
+.PhoneInputCountryIcon {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  outline: none !important;
+  box-shadow: none !important;
+  background: white !important;
+  margin-bottom: 5px;
+}
+
 .eye-icon {
   position: absolute;
   right: 10px;

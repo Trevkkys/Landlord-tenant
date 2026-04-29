@@ -112,7 +112,7 @@ export default function ListProperty() {
 
                     {/* LOCATION */}
                     <input
-                        placeholder="Location"
+                        placeholder="Location = City, State."
                         name="location"
                         value={formData.location}
                         onChange={handleChange}
