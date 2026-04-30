@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { loginUser } from "../api/auth";
 
 export default function Login() {
 
@@ -13,30 +14,50 @@ export default function Login() {
 
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-
-        if (!role) {
-            alert("Please select a role");
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert("Fill all fields");
             return;
         }
 
-        if (!email || email.trim() === "") {
-            alert("Email is required");
-            return;
+        try {
+            const res = await loginUser({
+                email,
+                password,
+            });
+
+            console.log(res.data);
+
+            // SAVE USER + TOKEN
+            localStorage.setItem(
+                "vitRentUser",
+                JSON.stringify(res.data.user || res.data)
+            );
+
+            if (res.data.token) {
+                localStorage.setItem("token", res.data.token);
+            }
+
+            // ROUTE BY ROLE (important)
+            const role = res.data.user?.role || res.data.role;
+
+            if (role === "landlord") navigate("/landlord");
+            else if (role === "tenant") navigate("/tenant");
+            else if (role === "agent") navigate("/agent");
+            else navigate("/");
+
+        } catch (err) {
+            console.error(err);
+
+            const message =
+                err.response?.data?.message ||
+                err.response?.data?.error ||
+                "Login failed: Invalid credentials";
+
+            alert(message);
         }
+    };
 
-        const user = {
-            name: "John Doe",
-            email: email.trim(),
-            role: role.toLowerCase()
-        };
-
-        localStorage.setItem("vitRentUser", JSON.stringify(user));
-
-        if (role.toLowerCase() === "landlord") navigate("/landlord");
-        if (role.toLowerCase() === "tenant") navigate("/tenant");
-        if (role.toLowerCase() === "agent") navigate("/agent");
-    }
     return (
         <div className="auth-page">
 
@@ -85,23 +106,6 @@ export default function Login() {
                         >
                             {showPassword ? "🙈" : "👁️"}
                         </span>
-                    </div>
-
-                    {/* ROLE SELECTOR */}
-                    <p className="role-title">Select your role</p>
-
-                    <div className="role-buttons">
-
-                        {["Tenant", "Landlord", "Agent"].map((r) => (
-                            <button
-                                key={r}
-                                onClick={() => setRole(r)}
-                                className={role === r ? "role-active" : ""}
-                            >
-                                {r}
-                            </button>
-                        ))}
-
                     </div>
 
                     <button className="primary login-btn" onClick={handleLogin}>

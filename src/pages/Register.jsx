@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { registerUser } from "../api/auth";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -14,7 +15,6 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showNin, setShowNin] = useState(false);
-    const [countryCode, setCountryCode] = useState("+234");
     const [nin, setNin] = useState("");
     const [role, setRole] = useState("");
     const [agree, setAgree] = useState(false);
@@ -23,7 +23,7 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         // VALIDATION
         if (!name || !email || !phone || !city || !password || !confirmPassword || !nin || !role) {
             alert("Please fill all fields");
@@ -36,7 +36,7 @@ export default function Register() {
         }
 
         // PHONE VALIDATION (basic)
-        if (!/^\d{10,15}$/.test(phone)) {
+        if (!phone) {
             alert("Enter a valid phone number");
             return;
         }
@@ -51,24 +51,37 @@ export default function Register() {
             alert("Please agree to the Terms of Service and Privacy Policy");
             return;
         }
+        try {
+            const res = await registerUser({
+                full_name: name,
+                email,
+                phone_number: phone,
+                city,
+                nin,
+                password,
+                role: role.toLowerCase(),
+            });
 
-        const user = {
-            name,
-            email,
-            phone: countryCode + phone,
-            nin,
-            city,
-            role: role.toLowerCase(),
-        };
+            console.log(res.data); // VERY IMPORTANT (see response)
 
-        // SAVE USER
-        localStorage.setItem("vitRentUser", JSON.stringify(user));
+            localStorage.setItem(
+                "vitRentUser",
+                JSON.stringify(res.data.user || res.data)
+            );
 
-        // ROUTE BY ROLE (FIXED)
-        if (role.toLowerCase() === "landlord") navigate("/landlord");
-        if (role.toLowerCase() === "tenant") navigate("/tenant");
-        if (role.toLowerCase() === "agent") navigate("/agent");
-    }
+
+            if (res.data.token) {
+                localStorage.setItem("token", res.data.token);
+            }
+
+            navigate("/login");
+
+        } catch (err) {
+            console.error(err);
+            alert(err.response?.data?.message || "Registration failed");
+        }
+    };
+
 
     const maskNIN = (value) => {
         if (value.length <= 4) return value;
@@ -172,7 +185,7 @@ export default function Register() {
                         <input
                             type={showNin ? "text" : "password"}
                             placeholder="NIN (11-digit National ID Number)"
-                            value={nin}
+                            value={showNin ? nin : maskNIN(nin)}
                             onChange={(e) => setNin(e.target.value.replace(/\D/g, ""))}
                         />
 
@@ -192,6 +205,7 @@ export default function Register() {
                         {["Tenant", "Landlord", "Agent"].map((r) => (
                             <button
                                 key={r}
+                                type="button"
                                 onClick={() => setRole(r)}
                                 className={role === r ? "role-active" : ""}
                             >
