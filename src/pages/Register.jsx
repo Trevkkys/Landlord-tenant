@@ -65,7 +65,7 @@ export default function Register() {
             console.log(res.data); // VERY IMPORTANT (see response)
 
             localStorage.setItem(
-                "vitRentUser",
+                "vitUser",
                 JSON.stringify(res.data.user || res.data)
             );
 

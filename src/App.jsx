@@ -20,6 +20,8 @@ import ListProperty from "./pages/ListProperty";
 import Properties from "./pages/Properties";
 import LandlordAnalytics from "./pages/LandlordAnalytics";
 import AgentAnalytics from "./pages/AgentAnalytics";
+import Kyc from "./pages/Kyc";
+import KycOverview from "./pages/KycOverview";
 
 export default function App() {
   return (
@@ -45,6 +47,8 @@ export default function App() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/landlord/analytics" element={<LandlordAnalytics />} />
         <Route path="/agent/analytics" element={<AgentAnalytics />} />
+        <Route path="/kyc" element={<Kyc />} />
+        <Route path="/kyc-overview" element={<KycOverview />} />
       </Routes >
     </>
   );

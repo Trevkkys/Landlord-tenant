@@ -7,7 +7,7 @@ export default function Navbar() {
     let user = null;
 
     try {
-        user = JSON.parse(localStorage.getItem("vitRentUser"));
+        user = JSON.parse(localStorage.getItem("vitUser"));
     } catch (e) {
         user = null;
     }
@@ -19,7 +19,7 @@ export default function Navbar() {
     const role = user?.role?.toLowerCase() || null;
 
     const logout = () => {
-        localStorage.removeItem("vitRentUser");
+        localStorage.removeItem("vitUser");
         navigate("/login");
     };
 

@@ -11,9 +11,33 @@ export default function Login() {
     const [role, setRole] = useState("");
     const [showVitelModal, setShowVitelModal] = useState(false);
     const [vitelNumber, setVitelNumber] = useState("");
+    const [phone, setPhone] = useState("");
+    const [error, setError] = useState("");
 
     const navigate = useNavigate();
 
+    const handleSendOtp = async () => {
+        if (!vitelNumber) {
+            setError("Enter your Vitel number");
+            return;
+        }
+
+        try {
+            // Replace with your actual Axios/Fetch call
+            const res = await axios.post("/api/v1/auth/vitel/request-otp", {
+                phone: vitelNumber
+                // Add role here if your colleague's API requires it
+            });
+
+            if (res.status === 200 || res.status === 201) {
+                // Success! Now navigate to your OTP Verification page
+                // Or open a second modal for the code input
+                navigate("/verify-otp", { state: { phone: vitelNumber } });
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to send OTP");
+        }
+    };
     const handleLogin = async () => {
         if (!email || !password) {
             alert("Fill all fields");
@@ -26,11 +50,32 @@ export default function Login() {
                 password,
             });
 
+            // --- Inside handleLogin after const res = await loginUser ---
+
+            console.log("Full API Response:", res.data); // Keep this to verify the structure
+
+            // 1. Save the Token (Crucial for the /me endpoint)
+            const token = res.data.token || res.data.accessToken || res.data.data?.token;
+            if (token) {
+                localStorage.setItem("token", token);
+            }
+
+            // 2. Save the User Info (For initial Profile display)
+            const userData = res.data.user || res.data.data?.user || res.data;
+            localStorage.setItem("vitUser", JSON.stringify(userData));
+
+            // 3. Extract Role and Navigate
+            const userRole = userData.role;
+            if (userRole === "landlord") navigate("/landlord");
+            else if (userRole === "tenant") navigate("/tenant");
+            else if (userRole === "agent") navigate("/agent");
+            else navigate("/");
+
             console.log(res.data);
 
             // SAVE USER + TOKEN
             localStorage.setItem(
-                "vitRentUser",
+                "vitUser",
                 JSON.stringify(res.data.user || res.data)
             );
 
@@ -162,7 +207,10 @@ export default function Login() {
                                     </p>
 
                                     {/* BUTTON */}
-                                    <button className="vitel-otp-btn">
+                                    <button
+                                        className="vitel-otp-btn"
+                                        onClick={handleSendOtp}
+                                    >
                                         Send OTP
                                     </button>
 
