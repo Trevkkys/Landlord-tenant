@@ -50,55 +50,33 @@ export default function Login() {
                 password,
             });
 
-            // --- Inside handleLogin after const res = await loginUser ---
+            console.log("Full API Response:", res.data);
 
-            console.log("Full API Response:", res.data); // Keep this to verify the structure
+            const token = res.data.access_token;
 
-            // 1. Save the Token (Crucial for the /me endpoint)
-            const token = res.data.token || res.data.accessToken || res.data.data?.token;
             if (token) {
                 localStorage.setItem("token", token);
+                console.log("Success: access_token saved!");
             }
 
-            // 2. Save the User Info (For initial Profile display)
+            // 2. EXTRACT USER DATA
             const userData = res.data.user || res.data.data?.user || res.data;
             localStorage.setItem("vitUser", JSON.stringify(userData));
 
-            // 3. Extract Role and Navigate
-            const userRole = userData.role;
+            // 3. EXTRACT ROLE & NAVIGATE
+            const userRole = userData.role || "tenant";
+
             if (userRole === "landlord") navigate("/landlord");
             else if (userRole === "tenant") navigate("/tenant");
             else if (userRole === "agent") navigate("/agent");
             else navigate("/");
 
-            console.log(res.data);
-
-            // SAVE USER + TOKEN
-            localStorage.setItem(
-                "vitUser",
-                JSON.stringify(res.data.user || res.data)
-            );
-
-            if (res.data.token) {
-                localStorage.setItem("token", res.data.token);
-            }
-
-            // ROUTE BY ROLE (important)
-            const role = res.data.user?.role || res.data.role;
-
-            if (role === "landlord") navigate("/landlord");
-            else if (role === "tenant") navigate("/tenant");
-            else if (role === "agent") navigate("/agent");
-            else navigate("/");
-
         } catch (err) {
-            console.error(err);
-
+            console.error("Login Error:", err);
             const message =
+                err.response?.data?.detail ||
                 err.response?.data?.message ||
-                err.response?.data?.error ||
                 "Login failed: Invalid credentials";
-
             alert(message);
         }
     };

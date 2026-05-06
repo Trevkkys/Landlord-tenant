@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { profileService } from "../services/api";
 import { BiSolidShield } from "react-icons/bi";
 import KycOverview from "./KycOverview";
 import Modal from "../components/Modal";
@@ -15,9 +16,13 @@ export default function Profile() {
     const [modalContent, setModalContent] = useState(null);
     const [activeTab, setActiveTab] = useState("");
 
+    // Form States for API
+    const [profileForm, setProfileForm] = useState({ full_name: "", phone_number: "", email: "" });
+    const [passwordForm, setPasswordForm] = useState({ current_password: "", new_password: "", confirm_password: "" });
+
     const rawUser = localStorage.getItem("vitUser");
     const user = rawUser ? JSON.parse(rawUser) : null;
-    const role = user?.role || user?.user?.role || user?.data?.role || "tenant";
+    const role = user?.role || "tenant";
 
     const roleConfigs = {
         landlord: {
@@ -89,48 +94,70 @@ export default function Profile() {
         else document.body.classList.remove("dark");
     }, [darkMode]);
 
+    // 1. CLEAN FETCH: Uses the service
+    const fetchProfileData = async () => {
+        try {
+            const result = await profileService.getProfile(role);
+            const freshUser = result.data || result;
+            localStorage.setItem("vitUser", JSON.stringify(freshUser));
+            setProfileForm({
+                full_name: freshUser.full_name || "",
+                phone_number: freshUser.phone_number || "",
+                email: freshUser.email || ""
+            });
+        } catch (err) {
+            console.error("Service Error:", err.message);
+        }
+    };
+
+    // Run on mount
     useEffect(() => {
-        const fetchFreshUserData = async () => {
-            const token = localStorage.getItem("token"); // Retrieve the stored token
-
-            if (!token) return; // If no token, don't call the API
-
-            try {
-                const response = await fetch("https://your-api.com/api/v1/auth/me", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`, // Use the token here
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // This updates your local data with whatever is currently in the DB
-                    localStorage.setItem("vitUser", JSON.stringify(data));
-                }
-            } catch (error) {
-                console.error("Error fetching user info:", error);
-            }
-        };
-
-        fetchFreshUserData();
+        fetchProfileData();
     }, []);
 
-    // Function to open specific modal content
+    // 2. CLEAN UPDATE: Uses the service
+    const handleSaveProfile = async () => {
+        try {
+            await profileService.updateProfile(role, profileForm);
+            alert("Profile updated!");
+            setShowModal(false);
+            fetchProfileData(); // Refresh data
+        } catch (err) {
+            alert("Update failed. Check console for CORS or Network errors.");
+        }
+    };
+
+    // 3. CLEAN PASSWORD: Swapped old fetch for the service
+    const handleSavePassword = async () => {
+        if (passwordForm.new_password !== passwordForm.confirm_password) {
+            alert("Passwords do not match");
+            return;
+        }
+        try {
+            // Note: We use the service here too!
+            await profileService.changePassword(role, {
+                current_password: passwordForm.current_password,
+                new_password: passwordForm.new_password
+            });
+            alert("Password changed successfully!");
+            setShowModal(false);
+            setPasswordForm({ current_password: "", new_password: "", confirm_password: "" }); // Reset form
+        } catch (err) {
+            console.error(err);
+            alert("Password change failed. Check your current password.");
+        }
+    };
+
     const openPopup = (type, title) => {
         setActiveTab(title);
-        setModalContent(type); // 'form' or 'desc'
+        setModalContent(type);
         setShowModal(true);
     };
 
     return (
         <div className="profile-page" style={{ backgroundColor: config.bg, minHeight: '100vh' }}>
             <Navbar />
-
             <div className="profile-scroll">
-                {/* HEADER */}
                 <div className="profile-header">
                     <div className="avatar-wrapper">
                         <div className="profile-avatar">
@@ -158,7 +185,6 @@ export default function Profile() {
                     </div>
                 </div>
 
-                {/* KYC BANNER */}
                 <div className="kyc-banner" onClick={() => openPopup('kyc', 'KYC Overview')} style={{ cursor: "pointer", backgroundColor: config.kycBg }}>
                     <div className="kyc-icon"><BiSolidShield size={32} color="#F3F3F3" /></div>
                     <div className="kyc-text">
@@ -169,7 +195,6 @@ export default function Profile() {
                     <div className="kyc-arrow" style={{ color: '#fff' }}>&gt;</div>
                 </div>
 
-                {/* BADGES */}
                 <div className="badge-card">
                     <div className="badge-header">
                         <h3 className="badge-title">Badges</h3>
@@ -182,7 +207,6 @@ export default function Profile() {
                     </div>
                 </div>
 
-                {/* ACTIVITY */}
                 <div className="section">
                     <h3>My Activity</h3>
                     {config.activity.map((item, idx) => (
@@ -193,7 +217,6 @@ export default function Profile() {
                     ))}
                 </div>
 
-                {/* ACCOUNT */}
                 <div className="section">
                     <h3>Account</h3>
                     <div className="card" onClick={() => openPopup('form', 'Edit Profile')} style={{ cursor: 'pointer' }}>
@@ -208,7 +231,6 @@ export default function Profile() {
                     <div className="card" onClick={() => openPopup('kyc', 'KYC Verification')} style={{ cursor: 'pointer' }}>
                         🛡️ KYC Verification <span className="green-text" style={{ fontWeight: '300', fontSize: '13px' }}>Tier 1 Active &gt;</span>
                     </div>
-
                     <div className="card toggle">
                         <span>🔔 Notifications</span>
                         <label className="switch">
@@ -218,9 +240,6 @@ export default function Profile() {
                     </div>
                 </div>
 
-
-
-                {/* PREFERENCES, SUPPORT, SIGNOUT (Kept exactly same) */}
                 <div className="section">
                     <h3>Preferences</h3>
                     <div className="card">🌐 Language <span>English</span></div>
@@ -250,11 +269,9 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* DYNAMIC MODAL SYSTEM - Full Forms */}
             {showModal && (
                 <Modal onClose={() => setShowModal(false)}>
                     {modalContent === 'kyc' && <KycOverview role={role} onClose={() => setShowModal(false)} />}
-
                     {modalContent === 'desc' && (
                         <div style={{ padding: '20px', textAlign: 'center' }}>
                             <h2 style={{ marginBottom: '10px' }}>{activeTab}</h2>
@@ -262,42 +279,36 @@ export default function Profile() {
                             <button className="vitel-otp-btn" style={{ marginTop: '20px' }} onClick={() => setShowModal(false)}>Close</button>
                         </div>
                     )}
-
                     {modalContent === 'form' && (
                         <div style={{ padding: '20px' }}>
                             <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>{activeTab}</h2>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-
                                 {activeTab === 'Edit Profile' && (
                                     <>
-                                        <input type="text" placeholder="Full Name" defaultValue={user?.full_name} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                                        <input type="text" placeholder="Phone Number" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                                        <input type="email" placeholder="Email Address" defaultValue={user?.email} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <input type="text" placeholder="Full Name" value={profileForm.full_name} onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <input type="text" placeholder="Phone Number" value={profileForm.phone_number} onChange={(e) => setProfileForm({ ...profileForm, phone_number: e.target.value })} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <input type="email" placeholder="Email Address" value={profileForm.email} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <button className="vitel-otp-btn" onClick={handleSaveProfile}>Save Changes</button>
                                     </>
                                 )}
-
                                 {activeTab === 'Change Password' && (
                                     <>
-                                        <input type="password" placeholder="Current Password" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                                        <input type="password" placeholder="New Password" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                                        <input type="password" placeholder="Confirm New Password" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <input type="password" placeholder="Current Password" onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <input type="password" placeholder="New Password" onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <input type="password" placeholder="Confirm New Password" onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })} className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <button className="vitel-otp-btn" onClick={handleSavePassword}>Save Password</button>
                                     </>
                                 )}
-
                                 {activeTab === 'Bank Account' && (
                                     <>
                                         <select className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px', background: '#fff' }}>
-                                            <option>Access Bank</option>
-                                            <option>GTBank</option>
-                                            <option>Zenith Bank</option>
-                                            <option>Kuda MFB</option>
+                                            <option>Access Bank</option><option>GTBank</option><option>Zenith Bank</option><option>Kuda MFB</option>
                                         </select>
                                         <input type="text" placeholder="Account Number" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
                                         <input type="text" placeholder="Account Name" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                                        <button className="vitel-otp-btn" onClick={() => setShowModal(false)}>Save Changes</button>
                                     </>
                                 )}
-
-                                <button className="vitel-otp-btn" style={{ width: '100%', marginTop: '10px' }} onClick={() => setShowModal(false)}>Save Changes</button>
                             </div>
                         </div>
                     )}
