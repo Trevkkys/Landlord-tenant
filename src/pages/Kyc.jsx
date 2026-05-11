@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
     ShieldCheck, Camera, Check, FileText, User,
     BadgeCheck, FolderOpen, Lock, ChevronLeft,
     UploadCloud, Briefcase, Landmark, ChevronRight,
-    Info, Lightbulb
+    Info, Lightbulb, Image as ImageIcon
 } from 'lucide-react';
 
-const FullPageKYC = ({ role = 'landlord' }) => {
+const FullPageKYC = () => {
+    // 1. DYNAMIC ROLE DETECTION
+    const rawUser = localStorage.getItem("vitUser");
+    const user = rawUser ? JSON.parse(rawUser) : null;
+    const role = user?.role || 'tenant';
+
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [gender, setGender] = useState('Male');
@@ -16,7 +22,10 @@ const FullPageKYC = ({ role = 'landlord' }) => {
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [selfieCapture, setSelfieCapture] = useState(false);
 
-    const steps = ['Profile', 'Identity', 'Employment', 'Selfie', 'Review'];
+    // File Previews State
+    const [previews, setPreviews] = useState({});
+
+    const steps = ['Profile', 'Identity', 'Verification', 'Selfie', 'Review'];
 
     const handleNext = () => {
         if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
@@ -42,8 +51,8 @@ const FullPageKYC = ({ role = 'landlord' }) => {
                                 </div>
                             )}
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-500 z-10 border-2 ${i <= currentStep
-                                    ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200'
-                                    : 'bg-white border-emerald-100 text-emerald-200'
+                                ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200'
+                                : 'bg-white border-emerald-100 text-emerald-200'
                                 }`}>
                                 {i < currentStep ? <Check size={24} strokeWidth={3} /> : i + 1}
                             </div>
@@ -68,10 +77,10 @@ const FullPageKYC = ({ role = 'landlord' }) => {
                             className="w-full"
                         >
                             {currentStep === 0 && <StepOne gender={gender} setGender={setGender} />}
-                            {currentStep === 1 && <StepTwo docType={docType} setDocType={setDocType} role={role} />}
-                            {currentStep === 2 && <StepThree empStatus={empStatus} setEmpStatus={setEmpStatus} />}
+                            {currentStep === 1 && <StepTwo docType={docType} setDocType={setDocType} role={role} previews={previews} setPreviews={setPreviews} />}
+                            {currentStep === 2 && <StepThree empStatus={empStatus} setEmpStatus={setEmpStatus} role={role} previews={previews} setPreviews={setPreviews} />}
                             {currentStep === 3 && <StepFour setSelfieCapture={setSelfieCapture} selfieCapture={selfieCapture} />}
-                            {currentStep === 4 && <StepFive agreedToTerms={agreedToTerms} setAgreedToTerms={setAgreedToTerms} gender={gender} docType={docType} empStatus={empStatus} />}
+                            {currentStep === 4 && <StepFive agreedToTerms={agreedToTerms} setAgreedToTerms={setAgreedToTerms} gender={gender} docType={docType} empStatus={empStatus} role={role} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -105,7 +114,7 @@ const StepOne = ({ gender, setGender }) => (
     <div className="space-y-10">
         <div>
             <h1 className="text-5xl font-black text-[#064e3b] tracking-tight">Personal <span className="text-emerald-500">Profile</span></h1>
-            <p className="text-emerald-600/70 text-lg mt-2 font-medium">Let's get your basic details sorted.</p>
+            <p className="text-emerald-600/70 text-lg mt-2 font-medium">Basic info for your Tier 1 verification.</p>
         </div>
         <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3 md:col-span-2">
@@ -133,9 +142,9 @@ const StepOne = ({ gender, setGender }) => (
     </div>
 );
 
-const StepTwo = ({ docType, setDocType, role }) => (
+const StepTwo = ({ docType, setDocType, role, previews, setPreviews }) => (
     <div className="space-y-10">
-        <h1 className="text-5xl font-black text-[#064e3b] tracking-tight">Identity <span className="text-emerald-500">Document</span></h1>
+        <h1 className="text-5xl font-black text-[#064e3b] tracking-tight">Identity <span className="text-emerald-500">Tier 2</span></h1>
         <div className="grid md:grid-cols-2 gap-10">
             <div className="space-y-4">
                 {['National ID (NIN)', 'International Passport', 'Driver’s License'].map(type => (
@@ -151,51 +160,104 @@ const StepTwo = ({ docType, setDocType, role }) => (
                     </div>
                 ))}
                 <div className="pt-4">
-                    <PlainInput label={`${docType} Number`} placeholder={`Enter your ${docType} ID number`} />
+                    <PlainInput
+                        label={`${docType} Number`}
+                        placeholder={`Enter 11-digit NIN or ID number`}
+                        maxLength={docType === 'National ID (NIN)' ? 11 : 20}
+                    />
                 </div>
             </div>
             <div className="space-y-6">
                 <div className="grid gap-4">
-                    <WhiteUpload label="Front View Photo" />
-                    <WhiteUpload label="Back View Photo" />
-                    {role === 'landlord' && <WhiteUpload label="Proof of Ownership (C of O)" />}
+                    <WhiteUpload
+                        label="Front View Photo"
+                        id="front_id"
+                        previews={previews}
+                        setPreviews={setPreviews}
+                    />
+                    <WhiteUpload
+                        label="Back View Photo"
+                        id="back_id"
+                        previews={previews}
+                        setPreviews={setPreviews}
+                    />
+                    {/* Role specific Identity additions */}
+                    {role === 'tenant' && (
+                        <PlainInput label="LASRRA ID (Optional)" placeholder="Lagos Residency Number" />
+                    )}
                 </div>
             </div>
         </div>
     </div>
 );
 
-const StepThree = ({ empStatus, setEmpStatus }) => (
+const StepThree = ({ empStatus, setEmpStatus, role, previews, setPreviews }) => (
     <div className="space-y-10">
-        <h1 className="text-5xl font-black text-[#064e3b] tracking-tight">Employment <span className="text-emerald-500">& Income</span></h1>
+        <h1 className="text-5xl font-black text-[#064e3b] tracking-tight">
+            {role === 'landlord' ? 'Asset' : role === 'agent' ? 'License' : 'Income'} <span className="text-emerald-500">Tier 3</span>
+        </h1>
         <div className="space-y-8 max-w-3xl">
-            <div className="space-y-4">
-                <label className="text-xs font-black text-emerald-800 uppercase tracking-widest">Employment Status</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {['Employed', 'Self-Employed', 'Student', 'Other'].map(s => (
-                        <button
-                            key={s}
-                            onClick={() => setEmpStatus(s)}
-                            className={`py-3 rounded-xl font-bold text-sm transition-all border-2 ${empStatus === s ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-50 text-emerald-600 hover:border-emerald-300'}`}
-                        >
-                            {s}
-                        </button>
-                    ))}
+            {role === 'landlord' ? (
+                <div className="space-y-6">
+                    <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                        <Info className="text-emerald-600 mt-1" />
+                        <p className="text-sm font-medium text-emerald-800">Landlords must provide a valid Certificate of Occupancy or Deed of Assignment for property verification.</p>
+                    </div>
+                    <WhiteUpload
+                        icon={<FileText size={24} />}
+                        label="Certificate of Occupancy (C of O)"
+                        id="c_of_o"
+                        previews={previews}
+                        setPreviews={setPreviews}
+                    />
+                    <WhiteUpload
+                        icon={<Landmark size={24} />}
+                        label="Recent Utility Bill (Last 3 Months)"
+                        id="utility"
+                        previews={previews}
+                        setPreviews={setPreviews}
+                    />
                 </div>
-            </div>
-            <div className="grid md:grid-cols-2 gap-6">
-                <PlainInput label="Employer / Company Name" placeholder="e.g. Google Inc" />
-                <PlainInput label="Job Title / Role" placeholder="e.g. Product Designer" />
-            </div>
-            <div className="space-y-4">
-                <label className="text-xs font-black text-emerald-800 uppercase tracking-widest">Estimated Monthly Income</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {['< 250k', '250k - 750k', '750k - 1.5M', '1.5M+'].map(r => (
-                        <button key={r} className="py-4 bg-white border-2 border-emerald-50 rounded-2xl font-black text-sm hover:border-emerald-500 transition-all">₦{r}</button>
-                    ))}
+            ) : role === 'agent' ? (
+                <div className="space-y-6">
+                    <PlainInput label="Agency Name" placeholder="e.g. Lexis Properties" />
+                    <WhiteUpload
+                        icon={<BadgeCheck size={24} />}
+                        label="Real Estate License / SCUML Certificate"
+                        id="agent_cert"
+                        previews={previews}
+                        setPreviews={setPreviews}
+                    />
                 </div>
-            </div>
-            <WhiteUpload icon={<Landmark size={24} />} label="Upload 6-Months Bank Statement" />
+            ) : (
+                <div className="space-y-8">
+                    <div className="space-y-4">
+                        <label className="text-xs font-black text-emerald-800 uppercase tracking-widest">Employment Status</label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {['Employed', 'Self-Employed', 'Student', 'Other'].map(s => (
+                                <button
+                                    key={s}
+                                    onClick={() => setEmpStatus(s)}
+                                    className={`py-3 rounded-xl font-bold text-sm transition-all border-2 ${empStatus === s ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-50 text-emerald-600 hover:border-emerald-300'}`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <PlainInput label="Employer / Company Name" placeholder="e.g. Google Inc" />
+                        <PlainInput label="Job Title / Role" placeholder="e.g. Product Designer" />
+                    </div>
+                    <WhiteUpload
+                        icon={<Landmark size={24} />}
+                        label="Upload 6-Months Bank Statement"
+                        id="bank_statement"
+                        previews={previews}
+                        setPreviews={setPreviews}
+                    />
+                </div>
+            )}
         </div>
     </div>
 );
@@ -209,7 +271,11 @@ const StepFour = ({ selfieCapture, setSelfieCapture }) => (
                 className="aspect-square bg-white border-4 border-dashed border-emerald-100 rounded-[3rem] flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 transition-all relative overflow-hidden"
             >
                 {selfieCapture ? (
-                    <div className="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white"><Check size={80} strokeWidth={3} /></div>
+                    <div className="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white">
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                            <Check size={80} strokeWidth={3} />
+                        </motion.div>
+                    </div>
                 ) : (
                     <>
                         <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-4"><Camera size={40} /></div>
@@ -223,10 +289,9 @@ const StepFour = ({ selfieCapture, setSelfieCapture }) => (
                         <Lightbulb size={18} /> Tips for a perfect selfie
                     </div>
                     <ul className="space-y-4 text-emerald-800/70 font-medium">
-                        <li className="flex gap-3"><Check size={16} className="text-emerald-500 mt-1" /> Ensure your face is within the oval frame</li>
+                        <li className="flex gap-3"><Check size={16} className="text-emerald-500 mt-1" /> Ensure your face is within the frame</li>
                         <li className="flex gap-3"><Check size={16} className="text-emerald-500 mt-1" /> Find a spot with good, natural lighting</li>
-                        <li className="flex gap-3"><Check size={16} className="text-emerald-500 mt-1" /> Remove glasses, hats, or face masks</li>
-                        <li className="flex gap-3"><Check size={16} className="text-emerald-500 mt-1" /> Keep a neutral expression</li>
+                        <li className="flex gap-3"><Check size={16} className="text-emerald-500 mt-1" /> Remove glasses or hats</li>
                     </ul>
                 </div>
             </div>
@@ -234,19 +299,21 @@ const StepFour = ({ selfieCapture, setSelfieCapture }) => (
     </div>
 );
 
-const StepFive = ({ agreedToTerms, setAgreedToTerms, gender, docType, empStatus }) => (
+const StepFive = ({ agreedToTerms, setAgreedToTerms, gender, docType, empStatus, role }) => (
     <div className="space-y-10">
         <h1 className="text-5xl font-black text-[#064e3b] tracking-tight">Final <span className="text-emerald-500">Review</span></h1>
         <div className="grid md:grid-cols-2 gap-6">
-            <SummaryBlock title="Personal Information" items={{ "Gender": gender, "Nationality": "Nigerian", "Phone": "+234 800..." }} />
-            <SummaryBlock title="Identity Verification" items={{ "Document": docType, "ID Number": "2234XXXX90", "Photos": "2 Uploaded" }} />
-            <SummaryBlock title="Employment Info" items={{ "Status": empStatus, "Role": "Senior Manager", "Income": "750k - 1.5M" }} />
-            <SummaryBlock title="Verification" items={{ "Selfie": "Captured Successfully", "Face Match": "Verified" }} />
+            <SummaryBlock title="Personal Information" items={{ "Role": role.toUpperCase(), "Gender": gender, "Nationality": "Nigerian" }} />
+            <SummaryBlock title="Identity Verification" items={{ "Document": docType, "NIN Status": "Provided", "Photos": "Attached" }} />
+            {role === 'tenant' && <SummaryBlock title="Employment Info" items={{ "Status": empStatus, "Role": "Verified", "Bank Info": "Attached" }} />}
+            {role === 'landlord' && <SummaryBlock title="Asset Info" items={{ "Property Docs": "C of O Attached", "Utility": "Provided" }} />}
+            {role === 'agent' && <SummaryBlock title="Agency Info" items={{ "License": "SCUML Verified" }} />}
+            <SummaryBlock title="Liveness Check" items={{ "Selfie": "Captured", "Match": "Pending Review" }} />
         </div>
         <label className="flex items-start gap-5 p-8 bg-white rounded-[2rem] border-2 border-emerald-100 cursor-pointer group mt-8">
             <input type="checkbox" checked={agreedToTerms} onChange={() => setAgreedToTerms(!agreedToTerms)} className="w-8 h-8 rounded-xl accent-emerald-500 mt-1" />
             <p className="text-lg font-bold text-emerald-800 group-hover:text-emerald-600 transition-colors">
-                I certify that all provided data is true and accurate. I authorize RentSafe to verify my identity and employment details.
+                I certify that all provided documents (including C of O/Bank Statements) are authentic. I authorize RentSafe to verify these details.
             </p>
         </label>
     </div>
@@ -254,27 +321,58 @@ const StepFive = ({ agreedToTerms, setAgreedToTerms, gender, docType, empStatus 
 
 // --- REUSABLE UI ELEMENTS ---
 
-const PlainInput = ({ label, placeholder }) => (
+const PlainInput = ({ label, placeholder, maxLength }) => (
     <div className="space-y-2">
         <label className="text-xs font-black text-emerald-800 uppercase tracking-widest">{label}</label>
         <input
+            maxLength={maxLength}
             className="w-full bg-white border-2 border-emerald-50 rounded-2xl p-5 text-lg font-bold text-emerald-900 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all"
             placeholder={placeholder}
         />
     </div>
 );
 
-const WhiteUpload = ({ label, icon = <UploadCloud size={24} /> }) => (
-    <div className="group w-full p-6 bg-white border-2 border-dashed border-emerald-100 rounded-[2rem] flex items-center justify-between hover:border-emerald-500 transition-all cursor-pointer">
-        <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                {icon}
-            </div>
-            <span className="text-lg font-bold text-emerald-900">{label}</span>
+// 3. UPDATED UPLOAD COMPONENT WITH PREVIEW
+const WhiteUpload = ({ label, icon = <UploadCloud size={24} />, id, previews, setPreviews }) => {
+    const handleFile = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreviews(prev => ({ ...prev, [id]: url }));
+        }
+    };
+
+    return (
+        <div className="relative group w-full">
+            <input
+                type="file"
+                id={id}
+                className="hidden"
+                onChange={handleFile}
+                accept="image/*,application/pdf"
+            />
+            <label
+                htmlFor={id}
+                className={`w-full p-6 bg-white border-2 border-dashed rounded-[2rem] flex items-center justify-between hover:border-emerald-500 transition-all cursor-pointer ${previews[id] ? 'border-emerald-500 bg-emerald-50/30' : 'border-emerald-100'}`}
+            >
+                <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all overflow-hidden">
+                        {previews[id] ? (
+                            <img src={previews[id]} alt="preview" className="w-full h-full object-cover" />
+                        ) : icon}
+                    </div>
+                    <div>
+                        <span className="text-lg font-bold text-emerald-900 block">{label}</span>
+                        {previews[id] && <span className="text-xs text-emerald-500 font-black uppercase tracking-widest flex items-center gap-1"><Check size={12} /> File Ready</span>}
+                    </div>
+                </div>
+                <span className="text-[10px] font-black text-emerald-200 uppercase tracking-widest group-hover:text-emerald-500">
+                    {previews[id] ? 'Change' : 'Attach'}
+                </span>
+            </label>
         </div>
-        <span className="text-[10px] font-black text-emerald-200 uppercase tracking-widest group-hover:text-emerald-500">Attach</span>
-    </div>
-);
+    );
+};
 
 const SummaryBlock = ({ title, items }) => (
     <div className="p-8 bg-white rounded-[2.5rem] border border-emerald-50 shadow-sm">
@@ -290,21 +388,30 @@ const SummaryBlock = ({ title, items }) => (
     </div>
 );
 
-const SuccessScreen = () => (
-    <div className="min-h-screen bg-emerald-600 flex items-center justify-center p-10 text-center">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-8 text-white">
-            <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-2xl">
-                <ShieldCheck size={70} className="text-emerald-600" />
-            </div>
-            <h1 className="text-7xl font-black italic tracking-tighter">VERIFIED!</h1>
-            <p className="text-emerald-50 text-xl max-w-md mx-auto font-medium opacity-80">
-                Your verification request is currently being processed by our compliance team.
-            </p>
-            <button className="mt-10 py-5 px-16 bg-white text-emerald-600 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-2xl">
-                Continue to Profile
-            </button>
-        </motion.div>
-    </div>
-);
+const SuccessScreen = () => {
+    const navigate = useNavigate(); // This is the "driver" that changes the page
+
+    return (
+        <div className="min-h-screen bg-emerald-600 flex items-center justify-center p-10 text-center">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-8 text-white">
+                <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-2xl">
+                    <ShieldCheck size={70} className="text-emerald-600" />
+                </div>
+                <h1 className="text-7xl font-black italic tracking-tighter uppercase">Submitted</h1>
+                <p className="text-emerald-50 text-xl max-w-md mx-auto font-medium opacity-80">
+                    Your Tier 2 & 3 documents are under review. You'll receive a notification within 24 hours.
+                </p>
+
+                {/* Updated Button */}
+                <button
+                    onClick={() => navigate('/profile')}
+                    className="mt-10 py-5 px-16 bg-white text-emerald-600 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-2xl"
+                >
+                    Back to Profile
+                </button>
+            </motion.div>
+        </div>
+    );
+};
 
 export default FullPageKYC;
