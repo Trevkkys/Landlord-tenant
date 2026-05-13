@@ -4,13 +4,19 @@ import Navbar from "../components/Navbar";
 import { profileService } from "../services/api";
 import { BiSolidShield } from "react-icons/bi";
 import KycOverview from "./KycOverview";
+import { useRef } from "react";
 import Modal from "../components/Modal";
 
 export default function Profile() {
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);
+    const [isUploading, setIsUploading] = useState(false);
     const [notificationsOn, setNotificationsOn] = useState(true);
+    const [bankForm, setBankForm] = useState({ bank_name: "Access Bank", account_number: "", account_name: "" });
     const [darkMode, setDarkMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [language, setLanguage] = useState("English");
+    const [currency, setCurrency] = useState("NGN");
 
     // New states for dynamic popups
     const [modalContent, setModalContent] = useState(null);
@@ -20,9 +26,17 @@ export default function Profile() {
     const [profileForm, setProfileForm] = useState({ full_name: "", phone_number: "", email: "" });
     const [passwordForm, setPasswordForm] = useState({ current_password: "", new_password: "", confirm_password: "" });
 
-    const rawUser = localStorage.getItem("vitUser");
-    const user = rawUser ? JSON.parse(rawUser) : null;
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("vitUser")) || null);
     const role = user?.role || "tenant";
+
+    const [activeFaq, setActiveFaq] = useState(null);
+    const faqData = [
+        { q: "How do I apply for a property?", a: "Find a 'Verified' listing, click 'Apply Now', and fill in your details. Once approved, pay into the secure Vitel Escrow account." },
+        { q: "How does escrow work?", a: "Vitel holds your payment safely. Funds are only released to the landlord after our field agents confirm the property and you have moved in." },
+        { q: "Can I cancel a booking?", a: "Yes. You get a 100% refund if the physical inspection fails. For personal changes, landlord-specific cancellation policies apply." },
+        { q: "What is the 1% property tax?", a: "This is a platform service fee that covers digital verification, physical enumerator site visits, and legal document protection." },
+        { q: "How do I get my deposit back?", a: "Request a refund on your dashboard. Once the landlord confirms no damages, funds are sent to your bank account within 24 hours." }
+    ];
 
     const roleConfigs = {
         landlord: {
@@ -94,12 +108,15 @@ export default function Profile() {
         else document.body.classList.remove("dark");
     }, [darkMode]);
 
-    // 1. CLEAN FETCH: Uses the service
     const fetchProfileData = async () => {
         try {
             const result = await profileService.getProfile(role);
             const freshUser = result.data || result;
+
+            // Update both to keep them in sync
             localStorage.setItem("vitUser", JSON.stringify(freshUser));
+            setUser(freshUser); // This triggers the UI update!
+
             setProfileForm({
                 full_name: freshUser.full_name || "",
                 phone_number: freshUser.phone_number || "",
@@ -113,7 +130,7 @@ export default function Profile() {
     // Run on mount
     useEffect(() => {
         fetchProfileData();
-    }, []);
+    }, [role]);
 
     // 2. CLEAN UPDATE: Uses the service
     const handleSaveProfile = async () => {
@@ -145,10 +162,49 @@ export default function Profile() {
         } catch (err) {
             console.error(err);
             alert("Password change failed. Check your current password.");
+            setPasswordForm(prev => ({ ...prev, current_password: "" }));
+        }
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        try {
+            const uploadRes = await profileService.uploadImage(file);
+            // The backend returns 'file_url' in Postman
+            const newPath = uploadRes.file_url;
+
+            if (newPath) {
+                // 1. Tell the backend to save this path to the user's profile
+                await profileService.updateProfileAvatar(user.role, newPath);
+
+                // 2. Update the local React state so the image changes immediately
+                const updatedUser = { ...user, avatar_url: newPath };
+                setUser(updatedUser);
+
+                // 3. Update localStorage so it stays there when you refresh
+                localStorage.setItem("vitUser", JSON.stringify(updatedUser));
+
+                alert("Profile picture updated!");
+            }
+        } catch (err) {
+            console.error("Upload Error:", err);
+            alert("Upload failed. Check the console for details.");
+        } finally {
+            setIsUploading(false);
         }
     };
 
     const openPopup = (type, title) => {
+        if (title === 'Edit Profile') {
+            setProfileForm({
+                full_name: user?.full_name || "",
+                phone_number: user?.phone_number || "",
+                email: user?.email || ""
+            });
+        }
         setActiveTab(title);
         setModalContent(type);
         setShowModal(true);
@@ -160,10 +216,46 @@ export default function Profile() {
             <div className="profile-scroll">
                 <div className="profile-header">
                     <div className="avatar-wrapper">
-                        <div className="profile-avatar">
-                            {user?.full_name ? user.full_name.charAt(0).toUpperCase() : "M"}
+                        <div className="profile-avatar" style={{ overflow: 'hidden', position: 'relative' }}>
+                            {isUploading ? (
+                                <span className="loader">⌛</span> // Simple loading indicator
+                            ) : user?.avatar_url ? (
+                                <img
+                                    src={
+                                        user.avatar_url?.startsWith('/uploads')
+                                            ? `${import.meta.env.VITE_API_URL || 'https://rent-safe-backend.onrender.com'}${user.avatar_url}`
+                                            : user.avatar_url || "https://ui-avatars.com/api/?name=User"
+                                    }
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    onError={(e) => {
+                                        // THIS PART IS CRITICAL:
+                                        console.log("CHECK THIS URL IN CONSOLE:", e.target.src);
+                                        e.target.src = "https://ui-avatars.com/api/?name=User&background=EBF4FF&color=7F9CF5";
+                                    }}
+                                    alt="Profile"
+                                />
+                            ) : (
+                                user?.full_name ? user.full_name.charAt(0).toUpperCase() : "M"
+                            )}
                         </div>
-                        <div className="edit-avatar-btn">✏️</div>
+
+                        {/* Trigger the hidden input when pencil is clicked */}
+                        <div
+                            className="edit-avatar-btn"
+                            onClick={() => fileInputRef.current.click()}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            ✏️
+                        </div>
+
+                        {/* Hidden File Input */}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                        />
                     </div>
                     <h2 className="profile-name">{user?.full_name || "Guest User"}</h2>
                     <p className="profile-email">{user?.email || "No Email Found"}</p>
@@ -242,8 +334,24 @@ export default function Profile() {
 
                 <div className="section">
                     <h3>Preferences</h3>
-                    <div className="card">🌐 Language <span>English</span></div>
-                    <div className="card">💱 Currency <span>NGN</span></div>
+                    <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span>🌐 Language</span>
+                        <select value={language} onChange={(e) => setLanguage(e.target.value)}
+                            onFocus={(e) => e.target.style.color = '#069494'} onBlur={(e) => e.target.style.color = '#666'}
+                            style={{ border: 'none', background: 'transparent', color: '#666', fontWeight: '300', fontSize: '14px', outline: 'none', cursor: 'pointer', textAlign: 'right', appearance: 'none' }}>
+                            <option value="English">English</option><option value="Yoruba">Yoruba</option><option value="Igbo">Igbo</option><option value="Hausa">Hausa</option>
+                        </select>
+                    </div>
+
+                    <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span>💱 Currency</span>
+                        <select value={currency} onChange={(e) => setCurrency(e.target.value)}
+                            onFocus={(e) => e.target.style.color = '#069494'} onBlur={(e) => e.target.style.color = '#666'}
+                            style={{ border: 'none', background: 'transparent', color: '#666', fontWeight: '300', fontSize: '14px', outline: 'none', cursor: 'pointer', textAlign: 'right', appearance: 'none' }}>
+                            <option value="NGN">NGN (₦)</option><option value="USD">USD ($)</option><option value="GBP">GBP (£)</option><option value="EUR">EUR (€)</option>
+                        </select>
+                    </div>
+
                     <div className="card toggle">
                         <span>🌙 Dark Mode</span>
                         <label className="switch">
@@ -255,7 +363,7 @@ export default function Profile() {
 
                 <div className="section">
                     <h3>Support</h3>
-                    <div className="card">❓ Help & FAQ <span>&gt;</span></div>
+                    <div className="card" onClick={() => openPopup('faq', 'Help & FAQ')} style={{ cursor: 'pointer' }}>❓ Help & FAQ <span style={{ fontWeight: '300', color: '#666' }}>&gt;</span></div>
                     <div className="card">📄 Privacy Policy <span>&gt;</span></div>
                     <div className="card">⭐ Rate App <span>&gt;</span></div>
                 </div>
@@ -272,6 +380,29 @@ export default function Profile() {
             {showModal && (
                 <Modal onClose={() => setShowModal(false)}>
                     {modalContent === 'kyc' && <KycOverview role={role} onClose={() => setShowModal(false)} />}
+                    {modalContent === 'faq' && (
+                        <div style={{ padding: '20px', textAlign: 'left', maxHeight: '70vh', overflowY: 'auto' }}>
+                            <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>{activeTab}</h2>
+                            {faqData.map((item, index) => (
+                                <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #f0f0f0' }}>
+                                    <div
+                                        onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', padding: '10px 0' }}
+                                    >
+                                        <p style={{ fontWeight: '500', color: activeFaq === index ? '#28a745' : '#333', fontSize: '14px', margin: 0 }}>{item.q}</p>
+                                        <span style={{ transform: activeFaq === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: '0.3s', color: activeFaq === index ? '#28a745' : '#666', fontSize: '12px' }}>▼</span>
+                                    </div>
+
+                                    {activeFaq === index && (
+                                        <p style={{ fontSize: '13px', color: '#666', fontWeight: '300', lineHeight: '1.5', padding: '0 0 10px 0', margin: 0 }}>
+                                            {item.a}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                            <button className="vitel-otp-btn" style={{ marginTop: '20px' }} onClick={() => setShowModal(false)}>Close</button>
+                        </div>
+                    )}
                     {modalContent === 'desc' && (
                         <div style={{ padding: '20px', textAlign: 'center' }}>
                             <h2 style={{ marginBottom: '10px' }}>{activeTab}</h2>
@@ -301,12 +432,42 @@ export default function Profile() {
                                 )}
                                 {activeTab === 'Bank Account' && (
                                     <>
-                                        <select className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px', background: '#fff' }}>
-                                            <option>Access Bank</option><option>GTBank</option><option>Zenith Bank</option><option>Kuda MFB</option>
+                                        <select
+                                            className="auth-input"
+                                            value={bankForm.bank_name}
+                                            onChange={(e) => setBankForm({ ...bankForm, bank_name: e.target.value })}
+                                            style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px', background: '#fff' }}
+                                        >
+                                            <option>Access Bank</option>
+                                            <option>GTBank</option>
+                                            <option>Zenith Bank</option>
+                                            <option>Kuda MFB</option>
                                         </select>
-                                        <input type="text" placeholder="Account Number" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                                        <input type="text" placeholder="Account Name" className="auth-input" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }} />
-                                        <button className="vitel-otp-btn" onClick={() => setShowModal(false)}>Save Changes</button>
+                                        <input
+                                            type="text"
+                                            placeholder="Account Number"
+                                            value={bankForm.account_number}
+                                            onChange={(e) => setBankForm({ ...bankForm, account_number: e.target.value })}
+                                            className="auth-input"
+                                            style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Account Name"
+                                            value={bankForm.account_name}
+                                            onChange={(e) => setBankForm({ ...bankForm, account_name: e.target.value })}
+                                            className="auth-input"
+                                            style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
+                                        />
+                                        <button className="vitel-otp-btn" onClick={() => {
+                                            if (bankForm.account_number.length !== 10 || isNaN(bankForm.account_number)) {
+                                                alert("Please enter a valid 10-digit Account Number");
+                                                return;
+                                            }
+                                            console.log("Saving Bank Info:", bankForm);
+                                            // Call your profileService update here when ready
+                                            setShowModal(false);
+                                        }}>Save Changes</button>
                                     </>
                                 )}
                             </div>
